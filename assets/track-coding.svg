@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">空数据包的缓存闸门</title>
+  <desc id="desc">用于 FlipPal 编程与工具类抽卡。真实数据包被缓存闸门接住，不存在的空数据包却穿过多孔闸门直落数据库，表达缓存穿透及空值拦截的学习场景。原创动漫式机房构图。</desc>
+  <defs>
+    <pattern id="dots" width="14" height="14" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="2" fill="#19201b" opacity=".16"/></pattern>
+  </defs>
+  <g stroke="#19201b" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+    <rect width="640" height="360" fill="#27364a" stroke="none"/>
+    <path d="M640 0H390l170 190h80Z" fill="url(#dots)" stroke="none"/>
+    <path d="M0 294h640v66H0Z" fill="#8fcbd3"/>
+    <path d="M0 74 180 0h124L86 162H0Z" fill="#ff5c35"/>
+
+    <g>
+      <path d="M54 132h104v76H54Z" fill="#fff9e9"/>
+      <path d="M74 154h64M74 180h42" fill="none"/>
+      <path d="M168 172h100" fill="none" stroke-dasharray="12 12"/>
+      <path d="M178 66h104v76H178Z" fill="#ffc857"/>
+      <path d="M198 88h64M198 114h42" fill="none"/>
+      <path d="M292 128h70" fill="none" stroke-dasharray="12 12"/>
+    </g>
+
+    <g>
+      <path d="M294 82h132v202H294Z" fill="#f2f0e6"/>
+      <path d="M316 104h88v42h-88ZM316 164h88v42h-88ZM316 224h88v42h-88Z" fill="#8fcbd3"/>
+      <path d="M276 72h168l-22-42H298Z" fill="#ffc857"/>
+      <text x="314" y="60" fill="#19201b" stroke="none" font-family="Arial, sans-serif" font-size="22" font-weight="700" letter-spacing="2">CACHE</text>
+      <circle cx="360" cy="185" r="10" fill="#ff5c35"/>
+    </g>
+
+    <g>
+      <path d="M480 88h108v224H480Z" fill="#19201b" stroke="#fff9e9"/>
+      <path d="M500 112h68v38h-68ZM500 166h68v38h-68ZM500 220h68v38h-68Z" fill="#6d9c84" stroke="#fff9e9"/>
+      <circle cx="554" cy="278" r="8" fill="#ffc857" stroke="none"/>
+      <text x="494" y="76" fill="#fff9e9" stroke="none" font-family="Arial, sans-serif" font-size="22" font-weight="700" letter-spacing="3">DB</text>
+    </g>
+
+    <g transform="translate(416 236) rotate(14)">
+      <path d="M0 0h88v68H0Z" fill="#ff5c35"/>
+      <path d="M22 22h44M22 44h28" fill="none" stroke="#fff9e9" stroke-dasharray="5 7"/>
+      <path d="M-16 80 96 108" fill="none" stroke="#fff9e9" stroke-dasharray="8 10"/>
+    </g>
+
+    <path d="M438 158h42M438 196h42M438 234h42" fill="none" stroke="#ff5c35" stroke-width="8"/>
+    <path d="m206 302 48-26M222 324l58-30M58 44l64-28" fill="none" stroke="#fff9e9" stroke-width="7"/>
+  </g>
+</svg>

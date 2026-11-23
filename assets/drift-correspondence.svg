@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" role="img" aria-labelledby="title desc">
+  <title id="title">寄出理解，收回批注</title>
+  <desc id="desc">用于 FlipPal 漂流区。左侧改写卡沿蓝色航线寄往另一扇窗，右侧带橙色逐句批注的卡片沿原路返回，表现学习反馈在两位读者之间往返。原创动漫式城市纸信场景。</desc>
+  <defs>
+    <pattern id="dots" width="15" height="15" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="2.2" fill="#19201b" opacity=".15"/></pattern>
+  </defs>
+  <g stroke="#19201b" stroke-width="6" stroke-linejoin="round" stroke-linecap="round">
+    <rect width="1200" height="640" fill="#8fcbd3" stroke="none"/>
+    <path d="M0 0h480L180 360H0ZM1200 640H760l280-330h160Z" fill="url(#dots)" stroke="none"/>
+    <circle cx="600" cy="124" r="72" fill="#ffc857"/>
+    <path d="M600 24v28M600 196v28M500 124h28M672 124h28M530 54l20 20M650 174l20 20M530 194l20-20M650 74l20-20" fill="none"/>
+
+    <path d="M0 492 142 420l126 54 156-82 152 74 164-48 152 68 156-72 152 62v164H0Z" fill="#6d9c84"/>
+    <path d="M0 556h1200v84H0Z" fill="#f2f0e6"/>
+
+    <g>
+      <path d="M72 174h282v324H72Z" fill="#fff9e9"/>
+      <path d="m48 174 164-116 166 116Z" fill="#27364a"/>
+      <path d="M118 228h188v150H118Z" fill="#8fcbd3"/>
+      <path d="M212 228v150M118 302h188" fill="none"/>
+      <path d="M100 498h224l42 56H58Z" fill="#ff5c35"/>
+      <path d="M128 428h146v70H128Z" fill="#f2f0e6"/>
+      <path d="M148 450h104M148 474h76" fill="none"/>
+    </g>
+
+    <g>
+      <path d="M846 174h282v324H846Z" fill="#fff9e9"/>
+      <path d="m822 174 164-116 166 116Z" fill="#ff5c35"/>
+      <path d="M892 228h188v150H892Z" fill="#ffc857"/>
+      <path d="M986 228v150M892 302h188" fill="none"/>
+      <path d="M874 498h224l42 56H832Z" fill="#27364a"/>
+      <path d="M920 428h146v70H920Z" fill="#f2f0e6"/>
+      <path d="M940 450h104M940 474h76" fill="none"/>
+    </g>
+
+    <path d="M304 248C476 84 686 82 906 232" fill="none" stroke="#fff9e9" stroke-width="14" stroke-dasharray="20 20"/>
+    <path d="m862 198 54 38-62 20" fill="none" stroke="#fff9e9" stroke-width="12"/>
+    <g transform="translate(538 122) rotate(9)">
+      <path d="M0 0h188v126H0Z" fill="#f2f0e6"/>
+      <path d="M26 28h136M26 56h106M26 84h122" fill="none" stroke="#8fcbd3" stroke-width="10"/>
+      <path d="m188 0 54 62-54 64Z" fill="#ff5c35"/>
+    </g>
+
+    <path d="M896 398C730 538 496 534 302 400" fill="none" stroke="#ff5c35" stroke-width="14" stroke-dasharray="20 20"/>
+    <path d="m342 438-52-42 68-16" fill="none" stroke="#ff5c35" stroke-width="12"/>
+    <g transform="translate(520 394) rotate(-8)">
+      <path d="M0 0h196v132H0Z" fill="#ffc857"/>
+      <path d="M26 28h136M26 58h114M26 88h126" fill="none"/>
+      <path d="m36 22 14 16 24-28M104 52l14 16 24-28M42 82l14 16 24-28" fill="none" stroke="#ff5c35" stroke-width="7"/>
+      <path d="M156 0h40v42h-40ZM0 90h42v42H0Z" fill="#ff5c35"/>
+    </g>
+
+    <path d="M396 292h118M714 292h88M420 320h64M746 320h52" fill="none" stroke-width="7"/>
+  </g>
+</svg>

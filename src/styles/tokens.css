@@ -1,0 +1,49 @@
+:root {
+  color-scheme: light;
+
+  --color-paper: #f2f0e6;
+  --color-ink: #19201b;
+  --color-primary: #ff5c35;
+  --color-secondary: #8fcbd3;
+  --color-muted: #6f6d61;
+  --color-danger: #b83a2d;
+
+  --color-paper-sheet: #fff9e9;
+  --color-sun: #ffc857;
+  --color-night: #27364a;
+  --color-leaf: #6d9c84;
+
+  --color-rule: rgba(25, 32, 27, 0.24);
+  --color-rule-soft: rgba(25, 32, 27, 0.1);
+  --color-grid: rgba(25, 32, 27, 0.065);
+  --color-wash-primary: rgba(255, 92, 53, 0.1);
+  --color-wash-secondary: rgba(143, 203, 211, 0.24);
+  --color-veil: rgba(25, 32, 27, 0.55);
+
+  --font-body: "Trebuchet MS", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-display: Georgia, "Songti SC", SimSun, serif;
+  --font-mono: "Courier New", "PingFang SC", monospace;
+
+  --text-meta: 12px;
+  --text-body: 16px;
+  --text-lead: 20px;
+  --text-display: clamp(64px, 17vw, 248px);
+  --text-page: clamp(48px, 9vw, 112px);
+
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 40px;
+  --space-5: 64px;
+  --space-6: 104px;
+
+  --gutter: 24px;
+  --edge: clamp(20px, 4vw, 64px);
+  --shell-max: 1440px;
+
+  --radius: 0;
+  --border: 1px solid var(--color-ink);
+  --shadow-hard: 7px 7px 0 var(--color-ink);
+  --shadow-dialog: 14px 14px 0 var(--color-primary);
+  --ease-out: cubic-bezier(0.2, 0.7, 0, 1);
+}

@@ -1,0 +1,459 @@
+.card-pool {
+  padding-block: clamp(40px, 7vh, 80px) var(--space-6);
+}
+
+.pool-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: end;
+  padding-top: 8px;
+  border-top: 1px solid var(--color-ink);
+}
+
+.pool-head .eyebrow {
+  margin: 0 0 24px;
+  color: var(--color-muted);
+}
+
+.pool-head h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(48px, 7.2vw, 96px);
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: -0.06em;
+}
+
+.pool-head h1 em {
+  color: var(--color-primary);
+  font-style: normal;
+}
+
+.pool-head-copy {
+  padding-bottom: 8px;
+}
+
+.pool-head-copy p {
+  max-width: 32ch;
+  margin: 0 0 16px;
+}
+
+.pool-head-note {
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+}
+
+.pool-stats {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  margin-top: 48px;
+  border-block: 1px solid var(--color-ink);
+}
+
+.pool-stat {
+  padding: 16px 12px;
+  border-right: 1px solid var(--color-rule);
+}
+
+.pool-stat:last-child {
+  border-right: 0;
+}
+
+.pool-stat b {
+  display: block;
+  font-family: var(--font-display);
+  font-size: clamp(26px, 3vw, 42px);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.pool-stat span {
+  display: block;
+  margin-top: 6px;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+}
+
+.pool-feature-section {
+  margin-top: 64px;
+}
+
+.pool-section-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: 24px;
+  padding-top: 8px;
+  border-top: 1px solid var(--color-ink);
+}
+
+.pool-section-head .eyebrow {
+  grid-column: 1 / -1;
+  margin: 0 0 20px;
+  color: var(--color-muted);
+}
+
+.pool-section-head h2 {
+  grid-column: 1 / 2;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(36px, 4.8vw, 64px);
+  font-weight: 600;
+  line-height: 0.96;
+  letter-spacing: -0.05em;
+}
+
+.pool-feature {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  margin-top: 32px;
+}
+
+.pool-feature-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid var(--color-ink);
+  background: var(--color-paper-sheet);
+  box-shadow: var(--shadow-hard);
+}
+
+.pool-feature-card:nth-child(2) {
+  transform: rotate(0.4deg);
+}
+
+.pool-feature-card header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--color-rule);
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+.pool-feature-card h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+}
+
+.pool-feature-card > p {
+  margin: 0;
+  font-size: 15px;
+}
+
+.pool-feature-answer {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-rule);
+}
+
+.pool-feature-answer .eyebrow {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--color-muted);
+}
+
+.pool-feature-answer strong {
+  display: block;
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.pool-source {
+  margin: 0;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.pool-browser {
+  margin-top: 80px;
+}
+
+.pool-browser-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 24px;
+  padding-top: 8px;
+  border-top: 1px solid var(--color-ink);
+}
+
+.pool-browser-head .eyebrow {
+  margin: 0 0 16px;
+  color: var(--color-muted);
+}
+
+.pool-browser-head h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(36px, 4.8vw, 64px);
+  font-weight: 600;
+  line-height: 0.96;
+  letter-spacing: -0.05em;
+}
+
+.pool-browser-count {
+  margin: 0;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.pool-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 24px 0;
+}
+
+.pool-filter button {
+  min-height: 38px;
+  padding: 8px 12px;
+  border: 1px solid var(--color-ink);
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+}
+
+.pool-filter button:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.pool-filter button[aria-pressed="true"] {
+  background: var(--color-primary);
+}
+
+.pool-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+  gap: 24px;
+}
+
+.pool-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px;
+  border: 1px solid var(--color-ink);
+  background: var(--color-paper-sheet);
+}
+
+.pool-card header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--color-rule);
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.04em;
+}
+
+.pool-card h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+}
+
+.pool-front {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.pool-card details {
+  padding-top: 10px;
+  border-top: 1px solid var(--color-rule);
+}
+
+.pool-card summary {
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+.pool-card summary:hover {
+  color: var(--color-primary);
+}
+
+.pool-card details > p {
+  margin: 12px 0 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.pool-quiz {
+  font-weight: 600;
+}
+
+.pool-options {
+  margin: 8px 0 0;
+  padding-left: 1.4em;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.pool-options li {
+  margin-bottom: 6px;
+}
+
+.pool-options li.is-answer {
+  width: fit-content;
+  padding: 2px 4px;
+  background: var(--color-sun);
+  color: var(--color-ink);
+  font-weight: 600;
+}
+
+.pool-evidence {
+  border-left: 3px solid var(--color-primary);
+  padding-left: 10px;
+  color: var(--color-muted);
+  font-size: 12px !important;
+}
+
+.pool-card .pool-source {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-rule);
+}
+
+.pool-data {
+  margin-top: 80px;
+}
+
+.pool-data-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  margin-top: 32px;
+}
+
+.pool-data-grid article {
+  padding: 20px;
+  border: 1px solid var(--color-ink);
+  background: var(--color-paper-sheet);
+}
+
+.pool-data-grid .eyebrow {
+  display: block;
+  margin-bottom: 12px;
+  color: var(--color-muted);
+}
+
+.pool-data-grid strong {
+  display: block;
+  margin-bottom: 8px;
+  font-family: var(--font-display);
+  font-size: 24px;
+  line-height: 1.1;
+}
+
+.pool-data-grid p {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 14px;
+}
+
+@media (max-width: 900px) {
+  .pool-head,
+  .pool-section-head {
+    grid-template-columns: 1fr;
+  }
+
+  .pool-head h1 {
+    font-size: clamp(52px, 11vw, 88px);
+  }
+
+  .pool-head-copy {
+    margin-top: 24px;
+  }
+
+  .pool-feature,
+  .pool-data-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pool-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .card-pool {
+    padding-block: 40px 64px;
+  }
+
+  .pool-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: 32px;
+  }
+
+  .pool-stat {
+    border-bottom: 1px solid var(--color-rule);
+  }
+
+  .pool-stat:nth-child(2n) {
+    border-right: 0;
+  }
+
+  .pool-stat:nth-last-child(-n + 2) {
+    border-bottom: 0;
+  }
+
+  .pool-head h1 {
+    font-size: clamp(46px, 14vw, 72px);
+  }
+
+  .pool-feature,
+  .pool-grid,
+  .pool-data-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pool-browser,
+  .pool-data {
+    margin-top: 56px;
+  }
+
+  .pool-browser-head {
+    display: block;
+  }
+
+  .pool-browser-count {
+    margin-top: 16px;
+  }
+
+  .pool-feature-card,
+  .pool-card {
+    padding: 16px;
+  }
+
+  .pool-card h3 {
+    font-size: 28px;
+  }
+}

@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">胶片轨道：继续绕行，或剪断离场</title>
+  <desc id="desc">用于 FlipPal 首屏沉没成本知识卡。左侧胶片轨道围绕时钟反复绕行，象征继续投入已经付出的时间；右侧剪刀剪断胶片，通向明亮出口，象征及时止损。原创平涂动漫场景，不使用任何外部素材或角色。</desc>
+  <defs>
+    <pattern id="dots" width="16" height="16" patternUnits="userSpaceOnUse">
+      <circle cx="4" cy="4" r="2.6" fill="#19201b" opacity=".18"/>
+    </pattern>
+    <pattern id="smallDots" width="12" height="12" patternUnits="userSpaceOnUse">
+      <circle cx="3" cy="3" r="1.8" fill="#19201b" opacity=".14"/>
+    </pattern>
+    <clipPath id="frame"><rect width="1200" height="760"/></clipPath>
+  </defs>
+  <g clip-path="url(#frame)" stroke="#19201b" stroke-width="6" stroke-linejoin="round" stroke-linecap="round">
+    <rect width="1200" height="760" fill="#8fcbd3" stroke="none"/>
+    <path d="M0 0H510L250 310H0Z" fill="url(#dots)" stroke="none"/>
+    <path d="M1200 760H720L1010 460H1200Z" fill="url(#smallDots)" stroke="none"/>
+
+    <circle cx="1000" cy="142" r="88" fill="#ffc857"/>
+    <g fill="none">
+      <path d="M1000 24V0M1000 284v-38M882 142h-48M1166 142h-48M916 58l-34-34M1118 260l-34-34M916 226l-34 34M1118 24l-34 34"/>
+    </g>
+
+    <g fill="#fff9e9">
+      <path d="M52 176h225c-7-37-37-55-66-45-14-47-86-50-105-9-38-14-69 11-54 54Z"/>
+      <path d="M708 128h196c-4-29-32-45-55-33-16-40-68-38-84-4-32-10-58 8-57 37Z"/>
+    </g>
+
+    <path d="M0 610 154 522l94 38 144-92 132 74 134-50 168 78 140-56 234 92v154H0Z" fill="#6d9c84"/>
+    <path d="M0 670 188 590l128 44 172-58 148 56 182-40 184 62 198-38v144H0Z" fill="#f2f0e6"/>
+
+    <g>
+      <path d="M88 300h190v190H88Z" fill="#27364a"/>
+      <path d="m68 300 116-86 116 86Z" fill="#ff5c35"/>
+      <path d="M118 342h130v42H118Z" fill="#fff9e9"/>
+      <text x="133" y="373" fill="#19201b" stroke="none" font-family="Arial, sans-serif" font-size="28" font-weight="700" letter-spacing="4">PAID</text>
+      <path d="M142 424h34v66h-34ZM204 424h34v66h-34Z" fill="#8fcbd3"/>
+    </g>
+
+    <g>
+      <circle cx="340" cy="260" r="102" fill="#fff9e9"/>
+      <circle cx="340" cy="260" r="78" fill="#ffc857"/>
+      <path d="M340 260v-52M340 260l48 32" fill="none" stroke-width="10"/>
+      <circle cx="340" cy="260" r="10" fill="#19201b"/>
+      <path d="M340 176v18M340 326v18M256 260h18M406 260h18" fill="none"/>
+    </g>
+
+    <path d="M170 574C260 498 530 584 552 420c24-178-280-180-280-20 0 142 278 102 348 26" fill="none" stroke-width="82"/>
+    <path d="M170 574C260 498 530 584 552 420c24-178-280-180-280-20 0 142 278 102 348 26" fill="none" stroke="#fff9e9" stroke-width="62"/>
+    <path d="M170 574C260 498 530 584 552 420c24-178-280-180-280-20 0 142 278 102 348 26" fill="none" stroke-width="5" stroke-dasharray="12 22"/>
+
+    <path d="M570 520C746 506 822 368 1086 356" fill="none" stroke-width="82"/>
+    <path d="M570 520C746 506 822 368 1086 356" fill="none" stroke="#fff9e9" stroke-width="62"/>
+    <path d="M570 520C746 506 822 368 1086 356" fill="none" stroke-width="5" stroke-dasharray="12 22"/>
+
+    <g transform="translate(412 424) rotate(10)">
+      <path d="M0 0h166v94H0Z" fill="#ff5c35"/>
+      <path d="M22-22v144M144-22v144" fill="none" stroke-dasharray="8 12"/>
+      <path d="M48 32h72M48 56h48" fill="none"/>
+      <circle cx="22" cy="18" r="8" fill="#fff9e9"/>
+      <circle cx="144" cy="76" r="8" fill="#fff9e9"/>
+    </g>
+
+    <g>
+      <path d="M974 152h152v202H974Z" fill="#fff9e9"/>
+      <path d="M1004 184h92v170h-92Z" fill="#ffc857"/>
+      <path d="M974 354h152l46 52H928Z" fill="#ff5c35"/>
+      <path d="M1028 266h14" stroke-width="10"/>
+      <path d="M964 152h172l-26-42H990Z" fill="#27364a"/>
+      <text x="1000" y="140" fill="#fff9e9" stroke="none" font-family="Arial, sans-serif" font-size="25" font-weight="700" letter-spacing="5">EXIT</text>
+    </g>
+
+    <g transform="translate(770 408) rotate(-24)">
+      <circle cx="-48" cy="56" r="38" fill="#ff5c35"/>
+      <circle cx="22" cy="86" r="38" fill="#ff5c35"/>
+      <circle cx="-48" cy="56" r="16" fill="#8fcbd3"/>
+      <circle cx="22" cy="86" r="16" fill="#8fcbd3"/>
+      <path d="M-18 40 156-28 34 62ZM-12 50 142 118 20 72Z" fill="#f2f0e6"/>
+      <circle cx="4" cy="58" r="10" fill="#ffc857"/>
+    </g>
+
+    <g fill="none" stroke-width="8">
+      <path d="M886 478l102 42M870 514l122 66M912 444l94 24"/>
+      <path d="M84 82 142 36M110 112l88-70M1074 596l76-48M1046 634l96-58" stroke="#fff9e9"/>
+    </g>
+
+    <g transform="translate(620 112)">
+      <path d="M0 0h152l28 52-28 52H0L-28 52Z" fill="#27364a"/>
+      <text x="24" y="65" fill="#fff9e9" stroke="none" font-family="Arial, sans-serif" font-size="30" font-weight="700" letter-spacing="3">LOOP?</text>
+    </g>
+  </g>
+</svg>

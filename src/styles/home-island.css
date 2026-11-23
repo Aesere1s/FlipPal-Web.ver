@@ -1,0 +1,360 @@
+.home-hero {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--gutter);
+  padding-block: 48px 88px;
+}
+
+.home-hero::before,
+.home-hero::after {
+  display: none;
+}
+
+.home-overline {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  margin: 0;
+  padding-top: 8px;
+  border-top: 1px solid var(--color-rule);
+  color: var(--color-muted);
+}
+
+.home-title.home-story-title {
+  grid-column: 1 / -1;
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  font-size: clamp(64px, 11vw, 158px);
+  line-height: 0.8;
+  white-space: normal;
+  pointer-events: none;
+}
+
+.home-story-title .title-cut {
+  transform: rotate(-1.8deg) translateY(0.04em);
+}
+
+.home-lower {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  align-items: start;
+  gap: var(--gutter);
+  margin-top: -96px;
+}
+
+.home-intro {
+  grid-column: 1 / 5;
+  display: block;
+  position: relative;
+  z-index: 2;
+  padding-top: 72px;
+}
+
+.home-intro .home-sub {
+  max-width: 18ch;
+  margin-bottom: 24px;
+  font-size: clamp(22px, 2.3vw, 32px);
+  line-height: 1.15;
+}
+
+.home-lede {
+  max-width: 34ch;
+  margin: 0 0 32px;
+  color: var(--color-muted);
+}
+
+.home-intro .draw-trigger {
+  width: min(100%, 300px);
+}
+
+.island-sample {
+  grid-column: 5 / 13;
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  overflow: hidden;
+  border: 2px solid var(--color-ink);
+  background: var(--color-paper-sheet);
+  box-shadow: var(--shadow-hard);
+  transform: rotate(0.8deg);
+}
+
+.island-sample-figure {
+  margin: 0;
+  overflow: hidden;
+  border-bottom: 1px solid var(--color-ink);
+  background: var(--color-paper);
+}
+
+.island-sample-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.island-sample-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--color-rule);
+  color: var(--color-muted);
+}
+
+.island-sample-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: 24px;
+  padding: 24px 24px 32px;
+}
+
+.island-sample-body h2 {
+  max-width: 15ch;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3vw, 40px);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.045em;
+}
+
+.island-sample-body p {
+  margin: 0;
+}
+
+.island-sample-kicker {
+  margin-bottom: 8px !important;
+  padding: 4px 6px;
+  width: fit-content;
+  background: var(--color-sun);
+  color: var(--color-ink);
+}
+
+.learning-route {
+  padding-block: 48px 104px;
+}
+
+.learning-route-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: 24px;
+  padding-top: 8px;
+  border-top: 1px solid var(--color-ink);
+}
+
+.learning-route-head .eyebrow {
+  margin: 0 0 24px;
+  color: var(--color-muted);
+}
+
+.learning-route-head h2 {
+  max-width: 18ch;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(40px, 5.2vw, 76px);
+  font-weight: 600;
+  line-height: 0.98;
+  letter-spacing: -0.055em;
+}
+
+.learning-route-note {
+  max-width: 32ch;
+  align-self: end;
+  margin: 0;
+  color: var(--color-muted);
+}
+
+.learning-map {
+  margin: 40px 0 0;
+  border: 1px solid var(--color-ink);
+  background: var(--color-paper-sheet);
+  box-shadow: var(--shadow-hard);
+}
+
+.learning-map-canvas {
+  position: relative;
+  overflow: hidden;
+}
+
+.learning-map-canvas > img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.island-marker {
+  position: absolute;
+  z-index: 2;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--color-ink);
+  border-radius: 50%;
+  background: var(--color-paper-sheet);
+  color: var(--color-ink);
+  transform: translate(-50%, -50%);
+  transition: background-color 160ms var(--ease-out), opacity 160ms var(--ease-out);
+}
+
+.island-marker b {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.island-marker small {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  padding: 2px 5px;
+  border: 1px solid var(--color-ink);
+  background: var(--color-paper-sheet);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  line-height: 1.4;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+
+.island-marker[data-status="locked"] {
+  opacity: 0.4;
+}
+
+.island-marker[data-status="current"] {
+  background: var(--color-primary);
+  transform: translate(-50%, -50%) scale(1.08);
+}
+
+.island-marker[data-status="done"] {
+  border-color: var(--color-ink);
+  background: var(--color-ink);
+  color: var(--color-paper-sheet);
+}
+
+.island-marker[data-status="done"] small {
+  color: var(--color-ink);
+}
+
+.learning-map figcaption {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.learning-map figcaption b {
+  margin-right: 6px;
+  color: var(--color-primary);
+}
+
+@media (max-width: 900px) {
+  .home-intro {
+    grid-column: 1 / 6;
+  }
+
+  .island-sample {
+    grid-column: 6 / 13;
+  }
+
+  .island-sample-body {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .home-hero {
+    padding-block: 32px 56px;
+  }
+
+  .home-overline {
+    gap: 12px;
+    font-size: 10px;
+  }
+
+  .home-overline span:last-child {
+    text-align: right;
+  }
+
+  .home-title.home-story-title {
+    font-size: clamp(58px, 16vw, 96px);
+    line-height: 0.84;
+  }
+
+  .home-lower {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 40px;
+    margin-top: 32px;
+  }
+
+  .home-intro {
+    padding-top: 0;
+  }
+
+  .home-intro .draw-trigger {
+    width: 100%;
+  }
+
+  .island-sample {
+    transform: rotate(0.4deg);
+  }
+
+  .island-sample-body {
+    display: block;
+    padding: 20px;
+  }
+
+  .island-sample-body h2 {
+    margin-bottom: 20px;
+  }
+
+  .learning-route {
+    padding-block: 40px 64px;
+  }
+
+  .learning-route-head {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .learning-route-head h2 {
+    font-size: clamp(38px, 11vw, 58px);
+  }
+
+  .learning-route-note {
+    max-width: 36ch;
+  }
+
+  .learning-map {
+    margin-top: 24px;
+  }
+
+  .island-marker {
+    width: 27px;
+    height: 27px;
+    border-width: 1.5px;
+  }
+
+  .island-marker b {
+    font-size: 9px;
+  }
+
+  .island-marker small {
+    display: none;
+  }
+
+  .learning-map figcaption {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}

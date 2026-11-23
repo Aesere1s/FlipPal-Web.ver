@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f2f0e6">
+  <title>FlipPal — 把理解翻出来</title>
+  <style>
+    :root {
+      --bg: #f2f0e6;
+      --ink: #19201b;
+      --accent: #ff5c35;
+      --sky: #8fcbd3;
+      --sun: #ffc857;
+      --night: #27364a;
+      --paper: #fff9e9;
+      --leaf: #6d9c84;
+      --meta: 12px;
+      --body: 16px;
+      --lead: 20px;
+      --display: clamp(56px, 12vw, 176px);
+      --gutter: 24px;
+      --edge: clamp(20px, 4vw, 64px);
+      --font-body: "Trebuchet MS", "PingFang SC", "Microsoft YaHei", sans-serif;
+      --font-display: Georgia, "Songti SC", SimSun, serif;
+      --font-mono: "Courier New", monospace;
+    }
+    /* 规格 1、3、4：只用四级字阶、六档间距与背景／主色／强调色三种色彩角色。 */
+
+    *, *::before, *::after { box-sizing: border-box; min-width: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      overflow-x: clip;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-size: var(--body);
+      line-height: 1.55;
+    }
+    /* 字体明确指定 Trebuchet MS、Georgia 与中文宋体，不使用系统 UI 默认字体。 */
+
+    button, textarea, input { font: inherit; color: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button { cursor: pointer; }
+    button:disabled { cursor: not-allowed; opacity: .32; }
+    a { color: inherit; }
+    :focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+    ::selection { background: var(--accent); color: var(--ink); }
+    .shell { width: min(100%, 1440px); margin-inline: auto; padding-inline: var(--edge); }
+    .grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--gutter); }
+    .viewport-rule { width: 100%; border-top: 1px solid currentColor; }
+    /* 规格 2、5：十二列等宽栅格承载跨列内容，并设置一条真正贯穿视口的 1px 分割线。 */
+
+    .skip-link {
+      position: fixed;
+      top: 8px;
+      left: 8px;
+      z-index: 20;
+      padding: 8px 16px;
+      background: var(--accent);
+      transform: translateY(-160%);
+    }
+    .skip-link:focus { transform: translateY(0); }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .masthead {
+      min-height: 104px;
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      align-items: center;
+      gap: 40px;
+    }
+    .brand { display: inline-flex; align-items: baseline; gap: 16px; text-decoration: none; width: fit-content; }
+    .brand strong { font-family: var(--font-display); font-size: 40px; line-height: 1; letter-spacing: -.06em; }
+    .brand span, .edition, .eyebrow, .meta, .section-rule, .loop-nav, .button, .card-kicker {
+      font-size: var(--meta);
+      line-height: 1.4;
+      letter-spacing: .04em;
+    }
+    .edition { padding-left: 24px; border-left: 1px solid currentColor; opacity: .56; font-family: var(--font-mono); }
+    /* 规格 1：品牌字只承担识别，正文仍保持 16px；导航与元信息固定为 12px。 */
+
+    .text-button {
+      min-height: 44px;
+      padding: 8px 0;
+      border: 0;
+      border-bottom: 1px solid currentColor;
+      background: transparent;
+      font-size: var(--meta);
+      letter-spacing: .04em;
+    }
+    .text-button:hover { color: var(--accent); }
+
+    .loop-nav { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border-top: 1px solid currentColor; }
+    .loop-nav a {
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 16px;
+      border-right: 1px solid currentColor;
+      text-decoration: none;
+    }
+    .loop-nav a:last-child { border-right: 0; }
+    .loop-nav a span { font-family: var(--font-mono); opacity: .56; }
+    .loop-nav a.is-active { background: var(--accent); color: var(--ink); }
+    .loop-nav a.is-active span { opacity: 1; }
+    /* 规格 4：强调色只标记学习闭环中的当前阶段，不装饰普通导航。 */
+
+    .hero { position: relative; padding-top: 64px; padding-bottom: 104px; }
+    .hero-kicker { grid-column: 1 / -1; display: flex; justify-content: space-between; margin-bottom: 24px; }
+    .hero-title {
+      grid-column: 1 / 12;
+      grid-row: 2;
+      position: relative;
+      z-index: 2;
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: var(--display);
+      font-weight: 600;
+      line-height: .86;
+      letter-spacing: -.075em;
+      pointer-events: none;
+    }
+    .hero-title em { display: inline-block; font-weight: 600; transform: rotate(-2deg); transform-origin: left center; }
+    .hero-copy { grid-column: 1 / 5; grid-row: 3; margin-top: 40px; }
+    .hero-copy .lead, .lead { margin: 0 0 24px; font-size: var(--lead); line-height: 1.4; font-weight: 500; }
+    .hero-copy p:not(.lead) { max-width: 34ch; margin: 0 0 40px; }
+    .hero-demo {
+      grid-column: 5 / 13;
+      grid-row: 3;
+      position: relative;
+      margin-top: -112px;
+      transform: rotate(1.25deg);
+    }
+    /* 规格 2、5：标题与扩大后的插画卡保持 112px 错位重叠，卡片左移一列形成共同焦点。 */
+
+    .hard-shadow { box-shadow: 7px 7px 0 var(--ink); }
+    /* 全站唯一阴影：7px 硬阴影，无模糊、无第二种投影。 */
+
+    .specimen { overflow: hidden; border: 2px solid var(--ink); background: var(--paper); }
+    .specimen-head { display: flex; justify-content: space-between; gap: 16px; padding: 16px 24px; border-bottom: 1px solid currentColor; background: var(--paper); }
+    .specimen-visual { position: relative; margin: 0; border-bottom: 1px solid var(--ink); background: var(--sky); }
+    .specimen-visual img { display: block; width: 100%; height: auto; aspect-ratio: 1200 / 760; object-fit: cover; }
+    .specimen-visual figcaption {
+      position: absolute;
+      left: 16px;
+      bottom: 16px;
+      max-width: 330px;
+      padding: 8px 12px;
+      border: 1px solid var(--ink);
+      background: var(--paper);
+      font-size: var(--meta);
+      line-height: 1.4;
+    }
+    .specimen-visual figcaption strong { display: block; margin-bottom: 4px; }
+    .specimen-body { display: grid; grid-template-columns: 1.35fr 1fr; gap: 24px; padding: 24px 32px 40px; background: var(--paper); }
+    .specimen-question { max-width: 19ch; margin: 0; font-family: var(--font-display); font-size: clamp(32px, 4vw, 56px); line-height: 1.08; letter-spacing: -.04em; }
+    .specimen-foot { display: flex; flex-direction: column; justify-content: space-between; gap: 24px; margin: 0; }
+    .specimen-foot p { max-width: 30ch; margin: 0; }
+    .specimen-foot .meta { width: fit-content; padding: 8px; background: var(--sun); color: var(--ink); }
+    .oc-note {
+      position: absolute;
+      right: 24px;
+      bottom: -24px;
+      max-width: 220px;
+      padding: 16px;
+      border: 1px solid var(--ink);
+      background: var(--accent);
+      transform: rotate(-5deg);
+      font-size: var(--meta);
+    }
+    /* 图像方法：场景占据样卡上半部，题目与答案线索留在下半部；OC 便签只压边界，不遮挡正文。 */
+    /* 插配色：米白 #f2f0e6／纸张 #fff9e9 为底，墨绿 #19201b 为轮廓，天空蓝 #8fcbd3 扩大图像面积，橙 #ff5c35 与黄 #ffc857 只标记冲突和线索。 */
+
+    .button {
+      min-height: 48px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      width: fit-content;
+      padding: 12px 16px;
+      border: 1px solid var(--ink);
+      border-radius: 0;
+      background: transparent;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .button.primary { background: var(--accent); }
+    .button.ink { background: var(--ink); color: var(--bg); }
+    .button:hover:not(:disabled) { text-decoration: underline; text-underline-offset: 4px; }
+    /* 交互只改变文字与色彩，不使用通用的 hover 上浮效果。 */
+
+    .flow-section { padding-top: 104px; padding-bottom: 104px; }
+    .section-rule {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      border-top: 1px solid currentColor;
+      padding-top: 8px;
+      margin-bottom: 24px;
+      font-family: var(--font-mono);
+    }
+    .section-rule .section-index { display: flex; gap: 16px; }
+    .section-heading {
+      grid-column: 1 / 10;
+      margin: 0 0 64px;
+      font-family: var(--font-display);
+      font-size: var(--display);
+      font-weight: 600;
+      line-height: .9;
+      letter-spacing: -.07em;
+    }
+    .section-aside { grid-column: 11 / 13; align-self: start; margin: 0; padding-top: 8px; border-top: 1px solid currentColor; }
+    /* 规格 5：每个模块重复“通栏线＋左编号＋右状态”，大标题只允许覆盖自己的网格区域。 */
+
+    .draw-grid { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px 24px; }
+    .draw-card {
+      position: relative;
+      min-height: 420px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: stretch;
+      padding: 0;
+      overflow: hidden;
+      border: 1px solid var(--ink);
+      border-radius: 0;
+      background: var(--paper);
+      text-align: left;
+    }
+    .draw-card:nth-child(1) { transform: rotate(-1.5deg); }
+    .draw-card:nth-child(2) { transform: translateY(24px) rotate(1deg); }
+    .draw-card:nth-child(3) { transform: rotate(-.6deg); }
+    .draw-card.is-selected { background: var(--ink); color: var(--bg); }
+    .draw-card.is-selected::after { content: "当前"; position: absolute; top: 16px; right: 16px; padding: 4px 8px; background: var(--accent); color: var(--ink); }
+    /* 抽卡图像规则：统一 16:9 场景、粗轮廓、平涂与网点；图像解释知识机制，不用类别图标代替叙事。 */
+
+    .draw-top { display: flex; justify-content: space-between; gap: 16px; padding: 16px 20px 0; }
+    .draw-art { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; margin-top: 16px; border-block: 1px solid var(--ink); background: var(--sky); }
+    .draw-name { max-width: 12ch; margin: 20px; font-family: var(--font-display); font-size: 40px; line-height: 1; letter-spacing: -.04em; }
+    .draw-meta { margin: 0; padding: 0 20px 20px; opacity: .56; }
+    .draw-actions { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-top: 40px; }
+    .draw-status { margin: 0 auto 0 0; font-size: var(--meta); }
+
+    .learn-card { grid-column: 1 / 8; }
+    .flip-scene { perspective: 1200px; }
+    .flip-inner { position: relative; min-height: 440px; transform-style: preserve-3d; transition: transform 120ms ease-out; }
+    .flip-inner.is-flipped { transform: rotateY(180deg); }
+    .study-face {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 32px;
+      border: 1px solid var(--ink);
+      background: var(--bg);
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+    .study-back { transform: rotateY(180deg); background: var(--ink); color: var(--bg); }
+    /* 规格 4：卡片翻面通过主色与背景色互换完成，不新增第二种状态色。 */
+
+    .study-face-head { display: flex; justify-content: space-between; gap: 16px; padding-bottom: 16px; border-bottom: 1px solid currentColor; }
+    .study-question { margin: auto 0; padding-block: 40px; font-size: var(--lead); line-height: 1.5; font-weight: 500; }
+    .study-answer { margin: 24px 0 16px; font-size: var(--lead); line-height: 1.45; }
+    .study-explanation { margin: 0 0 24px; }
+    .study-source { margin-top: auto; margin-bottom: 0; font-size: var(--meta); opacity: .56; }
+    .learn-actions { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 24px; }
+    .quiz-panel { grid-column: 9 / 13; }
+    .quiz-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 24px; }
+    .timer { font-family: var(--font-display); font-size: 40px; line-height: 1; font-variant-numeric: tabular-nums; }
+    .quiz-question { margin: 0 0 24px; font-size: var(--lead); line-height: 1.4; }
+    .quiz-options { border-bottom: 1px solid currentColor; }
+    .quiz-option {
+      width: 100%;
+      min-height: 56px;
+      display: grid;
+      grid-template-columns: 32px 1fr;
+      gap: 8px;
+      padding: 16px 0;
+      border: 0;
+      border-top: 1px solid currentColor;
+      background: transparent;
+      text-align: left;
+    }
+    .quiz-option.is-current { padding-inline: 8px; background: var(--accent); }
+    .quiz-option.is-correct { font-weight: 700; }
+    .quiz-feedback { min-height: 48px; margin: 16px 0 0; font-size: var(--meta); }
+
+    .remake-original { grid-column: 1 / 5; }
+    .remake-original blockquote { margin: 24px 0 40px; font-family: var(--font-display); font-size: 40px; line-height: 1.15; letter-spacing: -.04em; }
+    .remake-original p { max-width: 32ch; }
+    .remake-form { grid-column: 6 / 13; }
+    .field { display: block; margin-bottom: 24px; }
+    .field-label { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 8px; font-size: var(--meta); letter-spacing: .04em; }
+    .field textarea {
+      width: 100%;
+      min-height: 88px;
+      display: block;
+      resize: vertical;
+      padding: 12px 0;
+      border: 0;
+      border-top: 1px solid var(--ink);
+      border-radius: 0;
+      background: transparent;
+      line-height: 1.55;
+    }
+    .field textarea:focus { border-top-color: var(--accent); outline-offset: 2px; }
+    .field textarea::placeholder { color: var(--ink); opacity: .4; }
+    /* 规格 3：四个改写槽严格保持 24px 间隔，当前槽仅用一条强调色边线标记。 */
+
+    .critique { grid-column: 6 / 13; display: grid; grid-template-columns: 80px 1fr; gap: 24px; margin-top: 16px; padding: 24px; background: var(--ink); color: var(--bg); }
+    .critique p { margin: 0; }
+    .critique .meta { margin-bottom: 8px; opacity: .56; }
+
+    .oc-face { position: relative; width: 64px; height: 64px; border: 1px solid currentColor; border-radius: 50%; }
+    .oc-face::before { content: "··"; position: absolute; top: 4px; left: 17px; font-family: var(--font-display); font-size: 40px; letter-spacing: 6px; }
+    .oc-face::after { content: ""; position: absolute; left: 22px; bottom: 13px; width: 18px; height: 6px; border-bottom: 2px solid currentColor; border-radius: 50%; }
+    .oc-face.is-grown::after { height: 12px; border: 2px solid currentColor; border-top: 0; }
+
+    .drift-compose { grid-column: 1 / 5; }
+    .drift-compose p { max-width: 34ch; }
+    .drift-visual { margin: 0 0 24px; overflow: hidden; border: 1px solid var(--ink); background: var(--sky); }
+    .drift-visual img { display: block; width: 100%; height: auto; aspect-ratio: 1200 / 640; object-fit: cover; }
+    .drift-visual figcaption { padding: 8px 12px; border-top: 1px solid var(--ink); background: var(--paper); font-size: var(--meta); line-height: 1.4; }
+    /* 漂流图像与抽卡共用轮廓和色彩规则：去程是蓝色理解卡，返程是橙色批注卡，直接呈现反馈闭环。 */
+    .drift-inbox { grid-column: 6 / 13; }
+    .empty-inbox { padding-block: 40px; border-top: 1px solid currentColor; border-bottom: 1px solid currentColor; }
+    .letter { border-top: 1px solid currentColor; }
+    .letter-head { display: flex; justify-content: space-between; gap: 16px; padding: 8px 0 24px; font-size: var(--meta); }
+    .letter-quote { margin: 0 0 40px; font-size: var(--lead); line-height: 1.5; }
+    .annotation { display: grid; grid-template-columns: 64px 1fr; gap: 16px; padding: 16px 0; border-top: 1px solid currentColor; }
+    .annotation-no { font-family: var(--font-mono); font-size: var(--meta); }
+    .annotation p { margin: 0; }
+    .reply-box { margin-top: 40px; }
+    .reply-box label { display: block; margin-bottom: 8px; font-size: var(--meta); }
+    .reply-row { display: grid; grid-template-columns: 1fr auto; gap: 16px; }
+    .reply-row input { width: 100%; min-height: 48px; padding: 8px 0; border: 0; border-bottom: 1px solid currentColor; border-radius: 0; background: transparent; }
+    .reply-status { min-height: 24px; margin: 8px 0 0; font-size: var(--meta); }
+
+    .growth-panel {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: 24px;
+      padding: 40px;
+      background: var(--ink);
+      color: var(--bg);
+    }
+    .growth-oc { grid-column: 1 / 4; display: flex; align-items: center; gap: 24px; }
+    .growth-oc .oc-face { width: 104px; height: 104px; flex: 0 0 104px; }
+    .growth-oc .oc-face::before { top: 15px; left: 28px; font-size: 56px; }
+    .growth-oc .oc-face::after { left: 37px; bottom: 24px; width: 26px; }
+    .growth-number { grid-column: 4 / 10; margin: 0; font-family: var(--font-display); font-size: var(--display); line-height: .8; letter-spacing: -.06em; }
+    .growth-unit { grid-column: 10 / 13; align-self: end; margin: 0; text-align: right; }
+    .growth-lines { grid-column: 4 / 13; display: grid; gap: 16px; margin-top: 24px; }
+    .growth-line-head { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 8px; font-size: var(--meta); }
+    .progress-track { height: 8px; border: 1px solid currentColor; }
+    .progress-fill { height: 100%; width: 0; background: var(--accent); transition: width 120ms ease-out; }
+    .ability { grid-column: 4 / 13; margin-top: 24px; padding-top: 16px; border-top: 1px solid currentColor; }
+    .ability strong { display: block; margin-top: 8px; font-size: var(--lead); }
+    /* 成长区是闭环的当前结果，反相整区并仅让新增进度保留强调色。 */
+
+    .page-footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 24px; padding-top: 24px; padding-bottom: 40px; font-size: var(--meta); }
+    .page-footer p { margin: 0; }
+
+    @media (max-width: 900px) {
+      .hero-title { grid-column: 1 / -1; }
+      .hero-copy { grid-column: 1 / 6; }
+      .hero-demo { grid-column: 6 / 13; }
+      .section-heading { grid-column: 1 / 10; }
+      .learn-card { grid-column: 1 / 8; }
+      .quiz-panel { grid-column: 8 / 13; }
+      .growth-oc { grid-column: 1 / 5; }
+      .growth-number { grid-column: 5 / 11; }
+      .growth-lines, .ability { grid-column: 5 / 13; }
+    }
+
+    @media (max-width: 760px) {
+      :root { --gutter: 16px; --display: clamp(56px, 16vw, 104px); }
+      .grid, .growth-panel { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+      .masthead { min-height: 88px; grid-template-columns: 1fr auto; gap: 16px; }
+      .edition { display: none; }
+      .brand strong { font-size: 32px; }
+      .brand span { display: none; }
+      .loop-nav a { min-height: 56px; flex-direction: column; justify-content: center; gap: 2px; padding: 8px 4px; }
+      .hero { padding-top: 40px; padding-bottom: 64px; }
+      .hero-kicker { grid-column: 1 / -1; }
+      .hero-title, .hero-copy, .hero-demo { grid-column: 1 / -1; grid-row: auto; }
+      .hero-copy { margin-top: 40px; }
+      .hero-demo { margin-top: 40px; transform: rotate(.6deg); }
+      .specimen-body { display: block; min-height: 0; padding: 24px; }
+      .specimen-question { font-size: 32px; }
+      .specimen-foot { margin-top: 24px; gap: 16px; }
+      .specimen-visual figcaption { left: 8px; bottom: 8px; max-width: calc(100% - 16px); padding: 8px; }
+      .oc-note { position: static; max-width: none; margin-top: 16px; transform: rotate(-2deg); }
+      .flow-section { padding-top: 64px; padding-bottom: 64px; }
+      .section-rule, .section-heading, .section-aside { grid-column: 1 / -1; }
+      .section-heading { margin-bottom: 40px; }
+      .section-aside { max-width: 32ch; margin: -24px 0 40px; }
+      .draw-grid { grid-template-columns: 1fr; gap: 32px; }
+      .draw-card { min-height: 0; }
+      .draw-name { font-size: 32px; }
+      .draw-card:nth-child(2) { transform: rotate(1deg); }
+      .learn-card, .quiz-panel, .remake-original, .remake-form, .critique, .drift-compose, .drift-inbox { grid-column: 1 / -1; }
+      .quiz-panel, .remake-form, .drift-inbox { margin-top: 40px; }
+      .flip-inner { min-height: 520px; }
+      .study-face { padding: 24px; }
+      .remake-original blockquote { font-size: 32px; }
+      .critique { grid-template-columns: 64px 1fr; padding: 16px; }
+      .growth-panel { padding: 24px; }
+      .growth-oc, .growth-number, .growth-unit, .growth-lines, .ability { grid-column: 1 / -1; }
+      .growth-number { margin-top: 24px; }
+      .growth-unit { text-align: left; }
+      .growth-lines, .ability { margin-top: 16px; }
+    }
+    /* 响应式规则：760px 以下改四列，所有内容通栏；375px 下正文仍为 16px，网格与输入控件均可收缩。 */
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#draw">跳至抽卡</a>
+
+  <header class="masthead shell">
+    <a class="brand" href="#top" aria-label="FlipPal 首页"><strong>FlipPal</strong><span>理解交换所</span></a>
+    <div class="edition">NO. 001<br>LOCAL LEARNING LEDGER</div>
+    <button class="text-button" id="resetDemo" type="button">重置演示 ↺</button>
+  </header>
+
+  <nav class="loop-nav shell" aria-label="学习闭环">
+    <a href="#draw" data-nav="draw" class="is-active"><span>01</span>抽卡</a>
+    <a href="#learn" data-nav="learn"><span>02</span>学卡</a>
+    <a href="#remake" data-nav="remake"><span>03</span>改卡</a>
+    <a href="#drift" data-nav="drift"><span>04</span>漂流</a>
+    <a href="#growth" data-nav="growth"><span>05</span>成长</a>
+  </nav>
+  <div class="viewport-rule" aria-hidden="true"></div>
+
+  <main id="top">
+    <section class="hero shell grid" aria-labelledby="heroTitle">
+      <div class="hero-kicker eyebrow"><span>不是收藏答案，是交换理解</span><span>3 分钟 / 1 次完整循环</span></div>
+      <h1 class="hero-title" id="heroTitle">把理解<br><em>翻出来。</em></h1>
+      <div class="hero-copy">
+        <p class="lead">一张卡，一次表达，一位会记住你说过什么的 OC。</p>
+        <p>抽卡开始，翻卡理解，用自己的话重写，再把它寄给另一位读者。成长不是打卡次数，而是你真的讲明白了一件事。</p>
+        <a class="button primary" href="#draw">开始今天的一张 <span aria-hidden="true">↓</span></a>
+      </div>
+      <div class="hero-demo">
+        <article class="specimen hard-shadow" aria-label="今日知识卡示例：沉没成本">
+          <div class="specimen-head card-kicker"><span>今日样张 / COGNITION</span><span>难度 02</span></div>
+          <figure class="specimen-visual">
+            <img src="../assets/hero-sunk-cost.svg" alt="胶片轨道左侧围绕时钟反复绕行，右侧被剪刀剪断并通向明亮出口，表现继续投入与及时止损的冲突。" width="1200" height="760">
+            <figcaption><strong>继续绕圈，还是剪断离场？</strong>胶片是已经付出的时间；出口只计算接下来的选择。原创场景，不使用角色素材。</figcaption>
+          </figure>
+          <div class="specimen-body">
+            <h2 class="specimen-question">已经付出的成本，为什么不该决定下一步？</h2>
+            <div class="specimen-foot">
+              <p>答案线索：先放下“已经花了多少”，只比较从现在开始，继续与停下各自还要付出什么。</p>
+              <span class="meta">SUNK COST<br>01 / 03</span>
+            </div>
+          </div>
+        </article>
+        <aside class="oc-note">OC「阿翻」：别只点头。等会儿，我要听你举一个新的例子。</aside>
+      </div>
+    </section>
+    <!-- 首屏由规格 2 的跨列与规格 5 的错位推出：产品实物与标题重叠，而非居中口号加通用面板。 -->
+
+    <section class="flow-section shell grid" id="draw" aria-labelledby="drawTitle">
+      <header class="section-rule"><span class="section-index"><span>01</span><span>DRAW</span></span><span id="drawState">今日 0 / 3</span></header>
+      <h2 class="section-heading" id="drawTitle">抽一张。</h2>
+      <p class="section-aside">不是三张功能卖点，而是三张可以真正翻开、作答和改写的知识卡。</p>
+      <div class="draw-grid" id="drawGrid">
+        <button class="draw-card hard-shadow" type="button" data-card-slot="0" aria-pressed="false">
+          <span class="draw-top card-kicker"><span class="draw-track">认知与思维</span><span>01</span>          </span>
+          <img class="draw-art" src="../assets/track-cognition.svg" alt="放映机只投出同向箭头，幕布后藏着反向证据，表现认知偏差。" width="640" height="360">
+          <span class="draw-name">尚未翻开</span>
+          <span class="draw-meta">点击翻开这张卡</span>
+        </button>
+        <button class="draw-card hard-shadow" type="button" data-card-slot="1" aria-pressed="false">
+          <span class="draw-top card-kicker"><span class="draw-track">认知与思维</span><span>02</span>          </span>
+          <img class="draw-art" src="../assets/track-cognition.svg" alt="放映机只投出同向箭头，幕布后藏着反向证据，表现认知偏差。" width="640" height="360">
+          <span class="draw-name">尚未翻开</span>
+          <span class="draw-meta">点击翻开这张卡</span>
+        </button>
+        <button class="draw-card hard-shadow" type="button" data-card-slot="2" aria-pressed="false">
+          <span class="draw-top card-kicker"><span class="draw-track">认知与思维</span><span>03</span>          </span>
+          <img class="draw-art" src="../assets/track-cognition.svg" alt="放映机只投出同向箭头，幕布后藏着反向证据，表现认知偏差。" width="640" height="360">
+          <span class="draw-name">尚未翻开</span>
+          <span class="draw-meta">点击翻开这张卡</span>
+        </button>
+      </div>
+      <div class="draw-actions">
+        <p class="draw-status" id="drawStatus" aria-live="polite">先选一张。稀有度只代表角度少见，不代表数值更强。</p>
+        <button class="button" id="redrawButton" type="button">重抽一次 <span>↻</span></button>
+        <button class="button primary" id="goLearnButton" type="button" disabled>去学这张 <span>↓</span></button>
+      </div>
+    </section>
+    <!-- 抽卡内容落在规格 2 的三个四列跨格中；旋转与硬阴影只用于区隔实体牌，不套用 feature 卡片结构。 -->
+
+    <div class="viewport-rule" aria-hidden="true"></div>
+    <section class="flow-section shell grid" id="learn" aria-labelledby="learnTitle">
+      <header class="section-rule"><span class="section-index"><span>02</span><span>LEARN</span></span><span id="learnState">等待抽卡</span></header>
+      <h2 class="section-heading" id="learnTitle">翻过去。</h2>
+      <p class="section-aside">正面只保留一个问题。背面不只给结论，还留下类比、反例与可查来源。</p>
+      <div class="learn-card">
+        <div class="flip-scene">
+          <div class="flip-inner" id="flipInner">
+            <article class="study-face study-front">
+              <div class="study-face-head card-kicker"><span id="studyTrack">尚未选卡</span><span>正面 / 问题</span></div>
+              <p class="study-question" id="studyQuestion">回到抽卡区，先挑一张你愿意讲给别人听的卡。</p>
+              <p class="study-source" id="studyFrontSource">FLIPPAL · LOCAL CARD</p>
+            </article>
+            <article class="study-face study-back">
+              <div class="study-face-head card-kicker"><span id="studyTitle">知识卡背面</span><span>背面 / 解释</span></div>
+              <div class="study-question">
+                <p class="study-answer" id="studyAnswer">翻过卡片后，这里会出现解释。</p>
+                <p class="study-explanation" id="studyExplanation">先读懂，再用自己的话重写。记住原文不等于理解。</p>
+              </div>
+              <p class="study-source" id="studySource">来源将在选卡后显示</p>
+            </article>
+          </div>
+        </div>
+        <div class="learn-actions">
+          <button class="button ink" id="flipButton" type="button" disabled>翻到背面 <span>↔</span></button>
+          <a class="button" href="#remake" id="toRemakeLink">带着理解去改写 <span>↓</span></a>
+        </div>
+      </div>
+      <aside class="quiz-panel" aria-labelledby="quizHeading">
+        <div class="quiz-head"><span class="meta" id="quizHeading">60 秒小测</span><span class="timer" id="timer">60</span></div>
+        <p class="quiz-question" id="quizQuestion">选卡后，这里会出现一道检查理解的问题。</p>
+        <div class="quiz-options" id="quizOptions"></div>
+        <p class="quiz-feedback" id="quizFeedback" aria-live="polite">答错会看到解释，不会只得到一个红叉。</p>
+      </aside>
+    </section>
+    <!-- 学卡由规格 2 的 7＋4 跨列与规格 4 的反相状态推出；小测是产品证据，不被品牌大字吞掉。 -->
+
+    <div class="viewport-rule" aria-hidden="true"></div>
+    <section class="flow-section shell grid" id="remake" aria-labelledby="remakeTitle">
+      <header class="section-rule"><span class="section-index"><span>03</span><span>REMAKE</span></span><span id="remakeState">等待通过小测</span></header>
+      <h2 class="section-heading" id="remakeTitle">说出来。</h2>
+      <p class="section-aside">四个槽位把“我懂了”拆成可检查的表达：事实、类比、反例，以及真正属于你的句子。</p>
+      <div class="remake-original">
+        <span class="eyebrow">原卡摘要 / ORIGINAL</span>
+        <blockquote id="originalQuote">先完成一次小测，再开始改写。</blockquote>
+        <p id="originalSource">原卡会留在左侧，但不提供一键复制。你的表达必须走到右侧。</p>
+      </div>
+      <form class="remake-form" id="remakeForm">
+        <label class="field">
+          <span class="field-label"><span>01 / 核心事实</span><span>不照抄标题</span></span>
+          <textarea id="fieldFact" placeholder="这个概念实际上在说什么？" required></textarea>
+        </label>
+        <label class="field">
+          <span class="field-label"><span>02 / 我的类比</span><span>来自你的生活</span></span>
+          <textarea id="fieldAnalogy" placeholder="它像什么时候发生过的什么事？" required></textarea>
+        </label>
+        <label class="field">
+          <span class="field-label"><span>03 / 一个反例</span><span>边界在哪里</span></span>
+          <textarea id="fieldCounter" placeholder="什么情况下，这个解释并不适用？" required></textarea>
+        </label>
+        <label class="field">
+          <span class="field-label"><span>04 / 说给陌生人</span><span>至少 12 个字</span></span>
+          <textarea id="fieldOwn" placeholder="如果只能留一段话，你会怎样让别人听懂？" required minlength="12"></textarea>
+        </label>
+        <button class="button primary" id="critiqueButton" type="submit" disabled>让 OC 读一遍 <span>→</span></button>
+      </form>
+      <div class="critique" aria-live="polite">
+        <div class="oc-face" id="critiqueFace" aria-hidden="true"></div>
+        <div><p class="meta">OC「阿翻」/ 第一个读者</p><p id="critiqueText">我还在等你的版本。先通过小测，再把四格写完。</p></div>
+      </div>
+    </section>
+    <!-- 改卡由规格 2 的 4＋7 跨列与规格 3 的固定槽位节奏推出；原稿与表达并列，但不提供复制捷径。 -->
+
+    <div class="viewport-rule" aria-hidden="true"></div>
+    <section class="flow-section shell grid" id="drift" aria-labelledby="driftTitle">
+      <header class="section-rule"><span class="section-index"><span>04</span><span>DRIFT</span></span><span id="driftState">收件箱 0</span></header>
+      <h2 class="section-heading" id="driftTitle">寄出去。</h2>
+      <p class="section-aside">漂流不是把卡片扔进黑洞。陌生读者会指着你的具体句子，告诉你哪里终于听懂了。</p>
+      <div class="drift-compose">
+        <figure class="drift-visual">
+          <img src="../assets/drift-correspondence.svg" alt="改写卡沿蓝色航线寄往另一扇窗，带橙色批注的卡片沿原路返回，表现理解在读者之间往返。" width="1200" height="640">
+          <figcaption>去程：寄出自己的版本。返程：收到指向具体句子的批注。图像对应 FlipPal 的反馈闭环。</figcaption>
+        </figure>
+        <span class="eyebrow">寄出内容 / YOUR VERSION</span>
+        <p id="driftPreview">完成改写后，你的「说给陌生人」会出现在这里。</p>
+        <p class="meta">本地演示：读者与批注均为预置内容，不伪装成真实联网用户。</p>
+        <button class="button primary" id="sendButton" type="button" disabled>寄出这张卡 <span>↗</span></button>
+      </div>
+      <div class="drift-inbox">
+        <div class="empty-inbox" id="emptyInbox">收件箱现在空着。寄出后，逐句批注会回到这里。</div>
+        <article class="letter" id="letter" hidden>
+          <div class="letter-head"><span>读者 07 / 逐句批注</span><span>刚刚收到</span></div>
+          <blockquote class="letter-quote" id="letterQuote"></blockquote>
+          <div class="annotation"><span class="annotation-no">L.01</span><p id="annotationOne"></p></div>
+          <div class="annotation"><span class="annotation-no">L.02</span><p id="annotationTwo"></p></div>
+          <div class="reply-box">
+            <label for="replyInput">回一句给读者 07</label>
+            <div class="reply-row"><input id="replyInput" type="text" maxlength="80" placeholder="哪一条批注最有用？"><button class="button" id="replyButton" type="button">回信</button></div>
+            <p class="reply-status" id="replyStatus" aria-live="polite"></p>
+          </div>
+        </article>
+      </div>
+    </section>
+    <!-- 漂流沿用规格 5 的编号横线作为逐句批注坐标，同时明确本地演示边界。 -->
+
+    <div class="viewport-rule" aria-hidden="true"></div>
+    <section class="flow-section shell grid" id="growth" aria-labelledby="growthTitle">
+      <header class="section-rule"><span class="section-index"><span>05</span><span>GROWTH</span></span><span id="growthState">关系等级 01</span></header>
+      <h2 class="section-heading" id="growthTitle">长出来。</h2>
+      <p class="section-aside">OC 不因为你点了几次而成长。理解、表达与收到反馈，分别留下不同的成长痕迹。</p>
+      <div class="growth-panel">
+        <div class="growth-oc"><div class="oc-face" id="growthFace" aria-hidden="true"></div><p class="meta">OC「阿翻」<br><span id="ocMood">还在等第一句话</span></p></div>
+        <p class="growth-number"><span id="growthNumber">0</span><span class="sr-only">成长值</span></p>
+        <p class="growth-unit meta">RELATION EXP<br><span id="growthMax">/ 52</span></p>
+        <div class="growth-lines">
+          <div><div class="growth-line-head"><span>关系线 / 被理解</span><span id="relationText">0%</span></div><div class="progress-track"><div class="progress-fill" id="relationFill"></div></div></div>
+          <div><div class="growth-line-head"><span>能力线 / 能表达</span><span id="abilityText">0 / 3</span></div><div class="progress-track"><div class="progress-fill" id="abilityFill"></div></div></div>
+        </div>
+        <div class="ability"><span class="meta">本次结算 / NEW ABILITY</span><strong id="abilityName">尚未解锁：把知识讲给别人听</strong><p id="growthSummary">完成小测、改写和漂流，分别获得 12、16、24 点成长值。</p></div>
+      </div>
+    </section>
+    <!-- 结算由规格 4 的主背景反相与状态强调色推出；数值增长绑定三个真实动作，而非访问次数。 -->
+  </main>
+
+  <footer class="page-footer shell">
+    <p>FLIPPAL / 你的理解，真的让它长大了。</p>
+    <p>本地文件 · 离线运行 · 无需账号</p>
+  </footer>
+
+  <script>
+    const cards = [
+      {
+        id: "sunk-cost", track: "认知与思维", title: "沉没成本", rarity: "普通", difficulty: 2,
+        question: "一张不能退的电影票已经买了。看到一半很难看，为什么“票钱都花了”不是继续看完的好理由？",
+        answer: "已经付出且无法收回的成本，不应参与下一步决策。",
+        explanation: "继续看下去不会赎回票钱，只会再投入一小时。真正需要比较的是：继续看电影，和用这一小时做别的事，哪个更有价值。反例是已投入成本仍能改变后续收益，例如维修能避免更大的损失，此时它不是无关信息。",
+        source: "来源：Richard Thaler《Misbehaving》/ 行为经济学中的沉没成本概念",
+        quiz: "哪一个问题最符合理性决策？", options: ["我已经花了多少钱？", "怎样才对得起之前的投入？", "从现在起，哪个选择收益更高？", "别人会不会觉得我浪费？"], correct: 2,
+        wrong: "过去的投入已经发生。请只比较从现在开始，各选项还会带来什么成本与收益。"
+      },
+      {
+        id: "confirmation", track: "认知与思维", title: "确认偏误", rarity: "稀有", difficulty: 3,
+        question: "当你认为“远程工作效率更高”后，为什么收藏的支持性文章越多，反而越需要主动寻找反例？",
+        answer: "人更容易寻找、注意和记住支持既有观点的证据。",
+        explanation: "确认偏误会让证据收集变成观点辩护。有效做法不是平均阅读正反文章，而是先写下什么结果会推翻自己的判断，再主动寻找它。反例是已有结论经过反复独立验证，继续搜寻同类反例的边际价值可能很低。",
+        source: "来源：Peter Wason / 确认偏误相关实验研究",
+        quiz: "哪种做法最能削弱确认偏误？", options: ["只读高质量的支持文章", "先写下能推翻自己的证据", "增加收藏文章的数量", "寻找观点相同的人讨论"], correct: 1,
+        wrong: "关键不是证据数量，而是你是否允许某种证据真正改变自己的结论。"
+      },
+      {
+        id: "http-cache", track: "编程与工具", title: "缓存穿透", rarity: "普通", difficulty: 3,
+        question: "如果恶意请求不断查询一个数据库里不存在的 ID，为什么简单设置缓存仍然可能挡不住数据库压力？",
+        answer: "不存在的结果没有被有效缓存，请求便持续绕过缓存打到数据库。",
+        explanation: "缓存通常只在查到真实数据后写入，不存在的 ID 因而每次都形成缓存未命中。可以缓存短时空值，或用布隆过滤器提前拦截。反例是业务允许结果短暂不一致但无法缓存空值时，需要结合限流与参数校验。",
+        source: "来源：Redis 文档 / Cache penetration 常见防护策略",
+        quiz: "哪种方式直接针对“不存在 ID 反复穿透”？", options: ["增加数据库连接数", "缓存短时空值", "延长所有真实数据 TTL", "关闭请求日志"], correct: 1,
+        wrong: "真实数据的 TTL 并不会覆盖不存在的 ID；需要让“不存在”也成为可识别的结果。"
+      },
+      {
+        id: "pyramid", track: "表达与沟通", title: "结论先行", rarity: "普通", difficulty: 2,
+        question: "向忙碌的同事汇报项目风险时，为什么先讲十分钟背景，反而可能让对方错过最重要的决定？",
+        answer: "先给结论能让听众带着明确问题理解后续背景。",
+        explanation: "结论先行不是省略推理，而是先指出需要对方知道或决定什么，再按支撑关系展开。反例是面对高度敏感或缺乏信任的交流，直接结论可能引发防御，需要简短建立共同背景。",
+        source: "来源：Barbara Minto《The Pyramid Principle》",
+        quiz: "下面哪句最适合作为汇报开头？", options: ["先回顾项目完整历史", "我按时间顺序说说经过", "需要在周五前增加一名测试，否则发布延期", "最近大家都很辛苦"], correct: 2,
+        wrong: "先找那句需要听众知道或采取行动的话，再决定背景应该怎样组织。"
+      },
+      {
+        id: "idempotency", track: "编程与工具", title: "幂等", rarity: "跨界", difficulty: 4,
+        question: "用户点击支付后网络超时，前端再试一次。怎样的接口设计能避免同一笔订单被扣款两次？",
+        answer: "同一操作重复执行一次或多次，最终结果保持一致。",
+        explanation: "客户端可以为一次业务操作携带唯一幂等键，服务端据此返回首次执行结果，而不是再次扣款。幂等不等于请求只发送一次，也不等于所有查询都没有副作用。反例是需要每次都新增记录的日志写入，不应强行去重。",
+        source: "来源：HTTP 方法语义与支付接口幂等键设计实践",
+        quiz: "幂等键最核心的作用是什么？", options: ["让网络不再超时", "识别同一次业务操作", "加密支付金额", "提高数据库查询速度"], correct: 1,
+        wrong: "网络重试仍会发生，服务端需要一种方式认出这些请求属于同一次业务操作。"
+      },
+      {
+        id: "survivorship", track: "认知与思维", title: "幸存者偏差", rarity: "稀有", difficulty: 3,
+        question: "研究成功创业者的共同习惯时，为什么只采访仍然活跃的公司，可能得到看似合理却误导的结论？",
+        answer: "样本只包含经过筛选后留下来的对象，失败者的信息被系统性遗漏。",
+        explanation: "失败者可能拥有完全相同的勤奋、作息与融资故事，却没有进入样本。改进方法是先定义完整初始群体，再追踪不同结局。反例是研究目标仅为幸存者的当前状态，而非成功原因时，这种样本仍有价值。",
+        source: "来源：Abraham Wald / 轰炸机弹孔分析的经典案例",
+        quiz: "要研究哪些习惯与创业成功有关，首先该补什么？", options: ["更多成功者的访谈", "失败或未存活公司的样本", "更漂亮的统计图", "成功者的高峰时刻"], correct: 1,
+        wrong: "如果只看得见留下的人，就无法判断所谓共同习惯是否也大量出现在失败者身上。"
+      }
+    ];
+
+    const initialState = () => ({
+      cardId: null, redrawUsed: false, deckOffset: 0, quizPassed: false,
+      rewriteSubmitted: false, sent: false, replied: false,
+      fields: { fact: "", analogy: "", counter: "", own: "" }, mastery: {}
+    });
+    let state = initialState();
+    let seconds = 60;
+    let timerId = null;
+
+    const $ = (id) => document.getElementById(id);
+    const currentCard = () => cards.find((card) => card.id === state.cardId);
+    const currentDeck = () => [0, 1, 2].map((index) => cards[(state.deckOffset + index) % cards.length]);
+    const artByTrack = {
+      "认知与思维": "../assets/track-cognition.svg",
+      "编程与工具": "../assets/track-coding.svg",
+      "表达与沟通": "../assets/track-expression.svg"
+    };
+    const artAltByTrack = {
+      "认知与思维": "放映机只投出同向箭头，幕布后藏着反向证据，表现主动寻找反证。",
+      "编程与工具": "真实数据包被缓存闸门接住，空数据包穿过多孔闸门落向数据库，表现缓存穿透。",
+      "表达与沟通": "感叹号车头先到达信息站台，背景车厢随后抵达，表现结论先行。"
+    };
+    const growthValue = () => (state.quizPassed ? 12 : 0) + (state.rewriteSubmitted ? 16 : 0) + (state.sent ? 24 : 0);
+
+    function saveState() {
+      try { localStorage.setItem("flippal-single-file", JSON.stringify(state)); } catch (error) { }
+    }
+
+    function loadState() {
+      try {
+        const saved = JSON.parse(localStorage.getItem("flippal-single-file"));
+        if (saved && typeof saved === "object") state = { ...initialState(), ...saved };
+      } catch (error) { state = initialState(); }
+      if (new URLSearchParams(location.search).get("demo") === "fresh") state = initialState();
+    }
+
+    function startTimer() {
+      clearInterval(timerId);
+      seconds = 60;
+      $("timer").textContent = seconds;
+      if (!state.cardId || state.quizPassed) return;
+      timerId = setInterval(() => {
+        seconds -= 1;
+        $("timer").textContent = Math.max(0, seconds);
+        if (seconds <= 0) {
+          clearInterval(timerId);
+          $("quizFeedback").textContent = "时间到了，但仍可以继续作答。这里检查理解，不惩罚速度。";
+        }
+      }, 1000);
+    }
+
+    function selectCard(cardId) {
+      if (state.cardId !== cardId) {
+        state.cardId = cardId;
+        state.quizPassed = false;
+        state.rewriteSubmitted = false;
+        state.sent = false;
+        state.replied = false;
+        state.fields = { fact: "", analogy: "", counter: "", own: "" };
+        $("flipInner").classList.remove("is-flipped");
+        $("replyInput").value = "";
+        $("replyStatus").textContent = "";
+        fillFields();
+        startTimer();
+      }
+      saveState();
+      render();
+    }
+
+    function fillFields() {
+      $("fieldFact").value = state.fields.fact || "";
+      $("fieldAnalogy").value = state.fields.analogy || "";
+      $("fieldCounter").value = state.fields.counter || "";
+      $("fieldOwn").value = state.fields.own || "";
+    }
+
+    function renderDraw() {
+      const deck = currentDeck();
+      document.querySelectorAll("[data-card-slot]").forEach((button, index) => {
+        const card = deck[index];
+        button.dataset.cardId = card.id;
+        button.classList.toggle("is-selected", card.id === state.cardId);
+        button.setAttribute("aria-pressed", String(card.id === state.cardId));
+        button.querySelector(".draw-track").textContent = card.track;
+        button.querySelector(".draw-name").textContent = card.title;
+        const art = button.querySelector(".draw-art");
+        art.src = artByTrack[card.track];
+        art.alt = artAltByTrack[card.track];
+        button.querySelector(".draw-meta").textContent = `${card.rarity} / 难度 0${card.difficulty} · 点击选择`;
+      });
+      $("redrawButton").disabled = state.redrawUsed;
+      $("redrawButton").innerHTML = state.redrawUsed ? "今日已重抽 <span>—</span>" : "重抽一次 <span>↻</span>";
+      $("goLearnButton").disabled = !state.cardId;
+      $("drawStatus").textContent = state.cardId ? `已选「${currentCard().title}」。你可以直接翻卡，也可以换一张。` : "先选一张。稀有度只代表角度少见，不代表数值更强。";
+      $("drawState").textContent = state.cardId ? "今日 1 / 3" : "今日 0 / 3";
+    }
+
+    function renderLearn() {
+      const card = currentCard();
+      $("flipButton").disabled = !card;
+      if (!card) {
+        $("studyTrack").textContent = "尚未选卡";
+        $("studyQuestion").textContent = "回到抽卡区，先挑一张你愿意讲给别人听的卡。";
+        $("studyFrontSource").textContent = "FLIPPAL · LOCAL CARD";
+        $("studyTitle").textContent = "知识卡背面";
+        $("studyAnswer").textContent = "翻过卡片后，这里会出现解释。";
+        $("studyExplanation").textContent = "先读懂，再用自己的话重写。记住原文不等于理解。";
+        $("studySource").textContent = "来源将在选卡后显示";
+        $("quizQuestion").textContent = "选卡后，这里会出现一道检查理解的问题。";
+        $("quizFeedback").textContent = "答错会看到解释，不会只得到一个红叉。";
+        $("learnState").textContent = "等待抽卡";
+        $("originalQuote").textContent = "先完成一次小测，再开始改写。";
+        $("originalSource").textContent = "原卡会留在左侧，但不提供一键复制。你的表达必须走到右侧。";
+        $("flipButton").innerHTML = "翻到背面 <span>↔</span>";
+        $("flipInner").classList.remove("is-flipped");
+        return;
+      }
+      $("studyTrack").textContent = `${card.track} / ${card.title}`;
+      $("studyQuestion").textContent = card.question;
+      $("studyFrontSource").textContent = `${card.rarity} · 难度 0${card.difficulty} · 60 秒理解`;
+      $("studyTitle").textContent = card.title;
+      $("studyAnswer").textContent = card.answer;
+      $("studyExplanation").textContent = card.explanation;
+      $("studySource").textContent = card.source;
+      $("quizQuestion").textContent = card.quiz;
+      $("learnState").textContent = state.quizPassed ? "理解 2 / 3" : "理解 1 / 3";
+      $("originalQuote").textContent = card.answer;
+      $("originalSource").textContent = card.source;
+      const optionButtons = $("quizOptions").querySelectorAll("button");
+      optionButtons.forEach((button, index) => {
+        button.classList.toggle("is-correct", state.quizPassed && index === card.correct);
+        button.disabled = state.quizPassed;
+      });
+      if (state.quizPassed) $("quizFeedback").textContent = "答对了。现在试着不照抄原文，把它讲成一个陌生人能理解的版本。";
+    }
+
+    function buildQuiz() {
+      $("quizOptions").replaceChildren();
+      const card = currentCard();
+      if (!card) return;
+      card.options.forEach((option, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "quiz-option";
+        const letter = document.createElement("span");
+        letter.textContent = String.fromCharCode(65 + index);
+        const text = document.createElement("span");
+        text.textContent = option;
+        button.append(letter, text);
+        button.addEventListener("click", () => answerQuiz(index, button));
+        $("quizOptions").append(button);
+      });
+    }
+
+    function answerQuiz(index, button) {
+      const card = currentCard();
+      if (!card || state.quizPassed) return;
+      document.querySelectorAll(".quiz-option").forEach((item) => item.classList.remove("is-current"));
+      button.classList.add("is-current");
+      if (index === card.correct) {
+        state.quizPassed = true;
+        state.mastery[card.id] = 2;
+        clearInterval(timerId);
+        saveState();
+        render();
+      } else {
+        $("quizFeedback").textContent = card.wrong;
+      }
+    }
+
+    function renderFlow() {
+      const growth = growthValue();
+      $("critiqueButton").disabled = !state.quizPassed;
+      $("sendButton").disabled = !state.rewriteSubmitted || state.sent;
+      $("remakeState").textContent = state.rewriteSubmitted ? "表达 2 / 3" : state.quizPassed ? "可以改写" : "等待通过小测";
+      $("driftPreview").textContent = state.rewriteSubmitted ? state.fields.own : "完成改写后，你的「说给陌生人」会出现在这里。";
+      $("driftState").textContent = state.sent ? "收件箱 1" : "收件箱 0";
+      $("emptyInbox").hidden = state.sent;
+      $("letter").hidden = !state.sent;
+      $("sendButton").innerHTML = state.sent ? "已经寄出 <span>✓</span>" : "寄出这张卡 <span>↗</span>";
+      if (state.sent) {
+        $("letterQuote").textContent = `“${state.fields.own}”`;
+        $("annotationOne").textContent = `你没有停在「${currentCard().title}」这个名词上，而是补出了自己的解释，这一段能让我继续往下读。`;
+        $("annotationTwo").textContent = state.fields.analogy ? `你写的类比「${state.fields.analogy.slice(0, 34)}${state.fields.analogy.length > 34 ? "…" : ""}」最具体；如果再交代类比的边界，会更准确。` : "如果再补一个生活类比，这段解释会更容易被记住。";
+      }
+      $("replyStatus").textContent = state.replied ? "回信已留在本地档案中，这次漂流完成了。" : "";
+      $("growthNumber").textContent = growth;
+      $("relationText").textContent = `${Math.round(growth / 52 * 100)}%`;
+      $("relationFill").style.width = `${growth / 52 * 100}%`;
+      const completed = [state.quizPassed, state.rewriteSubmitted, state.sent].filter(Boolean).length;
+      $("abilityText").textContent = `${completed} / 3`;
+      $("abilityFill").style.width = `${completed / 3 * 100}%`;
+      $("growthState").textContent = growth >= 52 ? "关系等级 02" : "关系等级 01";
+      $("growthFace").classList.toggle("is-grown", state.sent);
+      $("critiqueFace").classList.toggle("is-grown", state.rewriteSubmitted);
+      $("ocMood").textContent = state.sent ? "记住了你的表达" : state.rewriteSubmitted ? "正在读你的版本" : "还在等第一句话";
+      $("abilityName").textContent = state.sent ? "已解锁：把知识讲给别人听" : "尚未解锁：把知识讲给别人听";
+      $("growthSummary").textContent = state.sent ? "理解 12 + 表达 16 + 反馈 24。成长来自完整闭环，不来自重复点击。" : "完成小测、改写和漂流，分别获得 12、16、24 点成长值。";
+      let active = "draw";
+      if (state.cardId) active = "learn";
+      if (state.quizPassed) active = "remake";
+      if (state.rewriteSubmitted) active = "drift";
+      if (state.sent) active = "growth";
+      document.querySelectorAll("[data-nav]").forEach((link) => link.classList.toggle("is-active", link.dataset.nav === active));
+    }
+
+    function render() {
+      renderDraw();
+      renderLearn();
+      renderFlow();
+    }
+
+    document.querySelectorAll("[data-card-slot]").forEach((button) => {
+      button.addEventListener("click", () => {
+        selectCard(button.dataset.cardId);
+        buildQuiz();
+        renderLearn();
+      });
+    });
+
+    $("redrawButton").addEventListener("click", () => {
+      if (state.redrawUsed) return;
+      state.redrawUsed = true;
+      state.deckOffset = 3;
+      state.cardId = null;
+      state.quizPassed = false;
+      state.rewriteSubmitted = false;
+      state.sent = false;
+      state.replied = false;
+      state.fields = { fact: "", analogy: "", counter: "", own: "" };
+      clearInterval(timerId);
+      seconds = 60;
+      $("timer").textContent = seconds;
+      $("quizOptions").replaceChildren();
+      $("replyInput").value = "";
+      $("critiqueText").textContent = "我还在等你的版本。先通过小测，再把四格写完。";
+      fillFields();
+      saveState();
+      render();
+    });
+
+    $("goLearnButton").addEventListener("click", () => $("learn").scrollIntoView({ behavior: "smooth" }));
+    $("flipButton").addEventListener("click", () => {
+      const flipped = $("flipInner").classList.toggle("is-flipped");
+      $("flipButton").innerHTML = flipped ? "回到问题 <span>↔</span>" : "翻到背面 <span>↔</span>";
+    });
+
+    ["fieldFact", "fieldAnalogy", "fieldCounter", "fieldOwn"].forEach((id) => {
+      $(id).addEventListener("input", () => {
+        state.fields = { fact: $("fieldFact").value, analogy: $("fieldAnalogy").value, counter: $("fieldCounter").value, own: $("fieldOwn").value };
+        saveState();
+      });
+    });
+
+    $("remakeForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (!state.quizPassed) return;
+      const own = $("fieldOwn").value.trim();
+      const analogy = $("fieldAnalogy").value.trim();
+      if (own.length < 12) {
+        $("critiqueText").textContent = "最后一段还太少。不要换一个说法重复标题，试着补上原因或具体场景。";
+        $("fieldOwn").focus();
+        return;
+      }
+      if (currentCard() && own === currentCard().answer) {
+        $("critiqueText").textContent = "这还是原卡的句子。先合上左页，假设你要讲给一个完全没听过这个术语的人。";
+        return;
+      }
+      state.fields = { fact: $("fieldFact").value.trim(), analogy, counter: $("fieldCounter").value.trim(), own };
+      state.rewriteSubmitted = true;
+      state.mastery[state.cardId] = 2;
+      $("critiqueText").textContent = analogy ? `我没有先挑术语，而是记住了你的类比：“${analogy.slice(0, 36)}${analogy.length > 36 ? "…" : ""}”。这说明你已经把知识放进了自己的经验里。现在可以寄给下一位读者。` : "你的核心句已经成立。再补一个来自生活的类比，会让陌生人更容易接住它。";
+      saveState();
+      renderFlow();
+    });
+
+    $("sendButton").addEventListener("click", () => {
+      if (!state.rewriteSubmitted || state.sent) return;
+      state.sent = true;
+      state.mastery[state.cardId] = 3;
+      saveState();
+      renderFlow();
+      $("letter").scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+
+    $("replyButton").addEventListener("click", () => {
+      const reply = $("replyInput").value.trim();
+      if (!reply) {
+        $("replyStatus").textContent = "写一句再寄回，比如哪条批注改变了你的理解。";
+        $("replyInput").focus();
+        return;
+      }
+      state.replied = true;
+      saveState();
+      $("replyInput").value = "";
+      renderFlow();
+    });
+
+    function resetDemo() {
+      if (!confirm("清空本次抽卡、改写、漂流与成长记录，重新开始？")) return;
+      state = initialState();
+      try { localStorage.removeItem("flippal-single-file"); } catch (error) { }
+      clearInterval(timerId);
+      seconds = 60;
+      $("timer").textContent = seconds;
+      $("flipInner").classList.remove("is-flipped");
+      $("quizOptions").replaceChildren();
+      $("replyInput").value = "";
+      $("critiqueText").textContent = "我还在等你的版本。先通过小测，再把四格写完。";
+      fillFields();
+      render();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    $("resetDemo").addEventListener("click", resetDemo);
+    loadState();
+    fillFields();
+    render();
+    buildQuiz();
+    renderLearn();
+    if (state.cardId && !state.quizPassed) startTimer();
+  </script>
+</body>
+</html>
