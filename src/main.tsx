@@ -13,10 +13,11 @@ if (!root) {
   throw new Error('缺少 #root 挂载节点');
 }
 
-if (!consumeFreshDemoParam()) {
-  createRoot(root).render(
-    <StrictMode>
-      <App />
-    </StrictMode>,
-  );
-}
+// ?demo=fresh 与重置按钮共用 resetDemo()；这里只清状态并抹掉参数，不再整页跳转。
+consumeFreshDemoParam();
+
+createRoot(root).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+);
