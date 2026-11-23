@@ -201,7 +201,7 @@ async function main() {
     }))()`);
     assert.equal(home.heading, '把理解翻出来。');
     assert.equal(home.navCount, 7);
-    assert.equal(home.triggerDisabled, true);
+    assert.equal(home.triggerDisabled, false);
     assert.deepEqual(runtimeErrors, []);
 
     console.log(

@@ -8,7 +8,8 @@
     "build": "npm run validate:cards && tsc --noEmit && vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "validate:cards": "node scripts/validate-cards.mjs"
+    "validate:cards": "node scripts/validate-cards.mjs",
+    "test:draw": "node --experimental-strip-types --test scripts/test-draw.test.ts"
   },
   "dependencies": {
     "react": "^18.3.1",

@@ -1,6 +1,9 @@
 import type { CSSProperties } from 'react';
+import { useNavigate } from 'react-router-dom';
 import islandHero from '../../assets/hero-learning-island.svg';
 import islandRoute from '../../assets/growth-learning-map.svg';
+import { ProgressRing } from '../components/ProgressRing';
+import { countTodayLearned } from '../lib/progress';
 import { SCHEMA_VERSION, useGameStore } from '../store/gameStore';
 
 
@@ -13,15 +16,20 @@ const routeSteps = [
 ];
 
 export default function Home() {
-  const tickets = useGameStore((state) => state.tickets);
-  const learnedToday = useGameStore((state) => state.learnedToday);
+  const navigate = useNavigate();
+
   const mastery = useGameStore((state) => state.mastery);
+  const learnedToday = useGameStore((state) => state.learnedToday);
   const remakes = useGameStore((state) => state.remakes);
   const sent = useGameStore((state) => state.sent);
   const oc = useGameStore((state) => state.oc);
+  const todayDraw = useGameStore((state) => state.todayDraw);
+  const revealedToday = todayDraw?.revealed.length ?? 0;
+  const drawTotal = todayDraw?.cardIds.length ?? 3;
+
 
   const completed = [
-    tickets < 3 || learnedToday.length > 0,
+    revealedToday > 0 || learnedToday.length > 0,
     Object.keys(mastery).length > 0,
     remakes.length > 0,
     sent.length > 0,
@@ -54,13 +62,21 @@ export default function Home() {
               抽一张、读进去、用自己的话重写，再把它交给另一位读者。成长不是翻过多少张，
               而是你真的讲明白了什么。
             </p>
-            <button className="draw-trigger" type="button" disabled>
+            <button
+              className="draw-trigger"
+              type="button"
+              onClick={() => navigate('/draw')}
+            >
               <span>抽一张</span>
-              <small>今日 {3 - tickets} / 3 · L0 待装填</small>
-              <span className="lock" aria-hidden="true">
-                LOCKED
-              </span>
+              <small>
+                今日已翻开 {revealedToday} / {drawTotal}
+              </small>
             </button>
+
+            <ProgressRing
+              done={countTodayLearned(todayDraw?.cardIds, mastery)}
+              total={todayDraw?.cardIds.length ?? 3}
+            />
           </div>
 
           <article className="island-sample" aria-labelledby="islandSampleTitle">
