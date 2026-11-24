@@ -102,6 +102,14 @@ export interface OCParts {
   outfit: number;
 }
 
+export interface OCGrowthLines {
+  gain: string[];
+  levelUp: string[];
+  unlock: string[];
+}
+
+export type RelationLineKey = keyof OCGrowthLines;
+
 export interface OCPersonalityPreset {
   id: OCPersonality;
   label: string;
@@ -113,6 +121,8 @@ export interface OCPersonalityPreset {
     personal: string[];
     complete: string[];
   };
+  relationTitles: string[];
+  growth: OCGrowthLines;
 }
 
 export interface OCPresets {

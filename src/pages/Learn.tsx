@@ -4,8 +4,10 @@ import cardsFile from '../data/cards.json';
 import { ProgressRing } from '../components/ProgressRing';
 import { OCBubble } from '../components/OCBubble';
 import { QuizPanel, type QuizResult } from '../components/QuizPanel';
+import { GrowthResult } from '../components/GrowthResult';
 import { getPersonalityPreset } from '../lib/ocLines';
 import { countTodayLearned } from '../lib/progress';
+import type { GrowthSettlement } from '../lib/growth';
 import { useGameStore } from '../store/gameStore';
 import { TRACK_LABELS, type Card, type Mastery } from '../types';
 
@@ -29,10 +31,12 @@ export default function Learn() {
   const ensureDailyDraw = useGameStore((state) => state.ensureDailyDraw);
   const recordCardSeen = useGameStore((state) => state.recordCardSeen);
   const recordQuizResult = useGameStore((state) => state.recordQuizResult);
+  const settleGrowth = useGameStore((state) => state.settleGrowth);
   const oc = useGameStore((state) => state.oc);
 
   const [stage, setStage] = useState<Stage>('front');
   const [result, setResult] = useState<QuizResult | null>(null);
+  const [growth, setGrowth] = useState<GrowthSettlement | null>(null);
 
   // 分享链接直接进入学卡时也补齐今日抽卡，保证进度环的 total 与首页一致。
   useEffect(() => {
@@ -78,6 +82,18 @@ export default function Learn() {
     recordQuizResult(card.id, next.correct);
     setResult(next);
     setStage('result');
+
+    const current = useGameStore.getState().mastery[card.id] ?? 0;
+    const nextMastery = Math.max(current, 1, next.correct ? 2 : 1);
+    const settlement = settleGrowth({
+      kind: 'learn',
+      cardId: card.id,
+      difficulty: card.difficulty,
+      mastery: nextMastery as 1 | 2 | 3,
+    });
+    if (settlement) {
+      setGrowth(settlement);
+    }
   };
 
   return (
@@ -183,6 +199,15 @@ export default function Learn() {
           返回抽卡
         </Link>
       </nav>
+
+      {growth && oc && (
+        <GrowthResult
+          settlement={growth}
+          cardTitle={card.title}
+          oc={oc}
+          onClose={() => setGrowth(null)}
+        />
+      )}
     </section>
   );
 }

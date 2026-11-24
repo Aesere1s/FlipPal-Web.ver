@@ -2,7 +2,9 @@ import { useState, type FormEvent } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import cardsFile from '../data/cards.json';
 import { OCBubble } from '../components/OCBubble';
+import { GrowthResult } from '../components/GrowthResult';
 import { critiqueRemake, REMAKE_LIMITS, validateRemake, type CritiqueResult, type RemakeErrors } from '../lib/critique';
+import { fingerprintOf, type GrowthSettlement } from '../lib/growth';
 import { getPersonalityPreset } from '../lib/ocLines';
 import { useGameStore } from '../store/gameStore';
 import type { Card, Remake, RemakeFields } from '../types';
@@ -34,11 +36,13 @@ export default function Remake() {
   const remakes = useGameStore((state) => state.remakes);
   const saveRemakeDraft = useGameStore((state) => state.saveRemakeDraft);
   const submitRemake = useGameStore((state) => state.submitRemake);
+  const settleGrowth = useGameStore((state) => state.settleGrowth);
   const existing = remakes.find((remake) => remake.cardRef === cardId);
   const [fields, setFields] = useState<RemakeFields>(existing ? toFields(existing) : emptyFields);
   const [errors, setErrors] = useState<RemakeErrors>({});
   const [feedback, setFeedback] = useState<CritiqueResult | null>(null);
   const [draftSaved, setDraftSaved] = useState(false);
+  const [growth, setGrowth] = useState<GrowthSettlement | null>(null);
 
   if (!card) {
     return (
@@ -67,9 +71,22 @@ export default function Remake() {
     const nextErrors = validateRemake(fields);
     setErrors(nextErrors);
     if (Object.values(nextErrors).some(Boolean) || !oc) return;
+    const nextFeedback = critiqueRemake(fields, card, oc.personality);
     submitRemake(card.id, fields);
-    setFeedback(critiqueRemake(fields, card, oc.personality));
+    setFeedback(nextFeedback);
     setDraftSaved(false);
+
+    if (nextFeedback.signal === 'ready') {
+      const settlement = settleGrowth({
+        kind: 'remake',
+        cardRef: card.id,
+        difficulty: card.difficulty,
+        fingerprint: fingerprintOf(fields),
+      });
+      if (settlement) {
+        setGrowth(settlement);
+      }
+    }
   };
 
   const handleSaveDraft = () => {
@@ -153,6 +170,15 @@ export default function Remake() {
           )}
         </div>
       </div>
+
+      {growth && oc && (
+        <GrowthResult
+          settlement={growth}
+          cardTitle={card.title}
+          oc={oc}
+          onClose={() => setGrowth(null)}
+        />
+      )}
     </section>
   );
 }

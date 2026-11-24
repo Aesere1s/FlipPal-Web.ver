@@ -13,7 +13,9 @@
     "verify:l2": "node scripts/verify-l2.cjs",
     "verify:l3": "node scripts/verify-l3.cjs",
     "verify:l4": "node scripts/verify-l4.cjs",
-    "verify:l5": "node scripts/verify-l5.cjs"
+    "verify:l5": "node scripts/verify-l5.cjs",
+    "test:growth": "node --experimental-strip-types --test scripts/test-growth.test.ts",
+    "verify:l6": "node scripts/verify-l6.cjs"
   },
   "dependencies": {
     "react": "^18.3.1",

@@ -14,6 +14,7 @@ import './styles/quiz.css';
 import './styles/progress-ring.css';
 import './styles/oc.css';
 import './styles/remake.css';
+import './styles/growth.css';
 
 const root = document.getElementById('root');
 

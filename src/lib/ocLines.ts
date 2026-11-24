@@ -1,5 +1,13 @@
 import presetsFile from '../data/ocPresets.json';
-import type { OCPartKind, OCParts, OCPersonality, OCPersonalityPreset, OCPresets, OCState } from '../types';
+import type {
+  OCPartKind,
+  OCParts,
+  OCPersonality,
+  OCPersonalityPreset,
+  OCPresets,
+  OCState,
+  RelationLineKey,
+} from '../types';
 
 export const ocPresets = presetsFile as OCPresets;
 
@@ -28,6 +36,27 @@ export function getFirstLine(oc: Pick<OCState, 'personality' | 'parts'>): string
     .replaceAll('{color}', getPartLabel('color', oc.parts.color))
     .replaceAll('{outfit}', getPartLabel('outfit', oc.parts.outfit))
     .replaceAll('{personality}', preset.label);
+}
+
+export function getRelationTitle(personality: OCPersonality, level: number): string {
+  const preset = getPersonalityPreset(personality);
+  const titles = preset.relationTitles;
+  const index = Math.min(Math.max(level, 1), titles.length) - 1;
+  return titles[index] ?? titles[titles.length - 1] ?? preset.label;
+}
+
+export function getGrowthLine(
+  personality: OCPersonality,
+  key: RelationLineKey,
+  variables: Record<string, string | number>,
+  seed = 0,
+): string {
+  const preset = getPersonalityPreset(personality);
+  const lines = preset.growth[key];
+  const template = lines[Math.abs(seed) % lines.length] ?? lines[0] ?? '';
+  return template.replace(/\{(\w+)\}/g, (match, name: string) =>
+    variables[name] === undefined ? match : String(variables[name]),
+  );
 }
 
 export function createRandomOCParts(random: () => number = Math.random): OCParts {

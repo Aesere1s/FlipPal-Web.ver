@@ -3,8 +3,16 @@ import { persist, type PersistStorage, type StorageValue } from 'zustand/middlew
 import cardsFile from '../data/cards.json';
 import type { Card, DriftItem, Mastery, OCParts, OCPersonality, OCState, Remake, RemakeFields, Track } from '../types';
 import { isNewCard, pickDailyCards, pickRedrawCards, todayKey } from '../lib/draw';
+import {
+  abilitiesUnlockedBy,
+  eventIdFor,
+  growthForEvent,
+  relationLevelForExp,
+  type GrowthEvent,
+  type GrowthSettlement,
+} from '../lib/growth';
 
-export const SCHEMA_VERSION = 2;
+export const SCHEMA_VERSION = 3;
 export const PERSIST_KEY = 'flip-pal-demo-v1';
 
 export interface TodayDraw {
@@ -29,6 +37,7 @@ export interface GameState {
   inbox: DriftItem[];
   lastDrawDate: string;
   oc: OCState | null;
+  growthEvents: string[];
   todayDraw: TodayDraw | null;
   newCardStreak: number;
   ensureDailyDraw: () => void;
@@ -40,6 +49,7 @@ export interface GameState {
   saveOC: (personality: OCPersonality, parts: OCParts) => void;
   saveRemakeDraft: (cardRef: string, fields: RemakeFields) => void;
   submitRemake: (cardRef: string, fields: RemakeFields) => void;
+  settleGrowth: (event: GrowthEvent) => GrowthSettlement | null;
   resetDemo: () => void;
 }
 
@@ -54,6 +64,7 @@ type GameStateData = Omit<
   | 'saveOC'
   | 'saveRemakeDraft'
   | 'submitRemake'
+  | 'settleGrowth'
   | 'resetDemo'
 >;
 
@@ -71,6 +82,7 @@ export function createInitialGameState(): GameStateData {
     inbox: [],
     lastDrawDate: '',
     oc: null,
+    growthEvents: [],
     todayDraw: null,
     newCardStreak: 0,
   };
@@ -102,6 +114,38 @@ function removeStorage(key: string): void {
   }
 }
 
+/** v2 → v3：补成长字段，保留 OC、改写卡与抽卡进度，而不是直接清空存档。 */
+function migratePersisted(parsed: StorageValue<GameState>): StorageValue<GameState> | null {
+  const legacy = parsed.state as (Partial<GameState> & { schemaVersion?: number }) | undefined;
+  const version = legacy?.schemaVersion ?? parsed.version;
+
+  if (version === SCHEMA_VERSION) {
+    return parsed;
+  }
+
+  if (version === 2 && legacy) {
+    return {
+      version: SCHEMA_VERSION,
+      state: {
+        ...createInitialGameState(),
+        ...legacy,
+        schemaVersion: SCHEMA_VERSION,
+        growthEvents: legacy.growthEvents ?? [],
+        oc: legacy.oc
+          ? {
+              ...legacy.oc,
+              relationLevel: legacy.oc.relationLevel ?? 1,
+              relationExp: legacy.oc.relationExp ?? 0,
+              abilities: legacy.oc.abilities ?? [],
+            }
+          : null,
+      } as GameState,
+    };
+  }
+
+  return null;
+}
+
 const versionedStorage: PersistStorage<GameState> = {
   getItem: (name) => {
     const raw = readStorage(name);
@@ -111,11 +155,15 @@ const versionedStorage: PersistStorage<GameState> = {
 
     try {
       const parsed = JSON.parse(raw) as StorageValue<GameState>;
-      if (parsed.version !== SCHEMA_VERSION || parsed.state?.schemaVersion !== SCHEMA_VERSION) {
+      const migrated = migratePersisted(parsed);
+      if (!migrated) {
         removeStorage(name);
         return null;
       }
-      return parsed;
+      if (migrated !== parsed) {
+        writeStorage(name, JSON.stringify(migrated));
+      }
+      return migrated;
     } catch {
       removeStorage(name);
       return null;
@@ -251,6 +299,48 @@ export const useGameStore = create<GameState>()(
       },
       submitRemake: (cardRef, fields) => {
         set({ remakes: upsertRemake(get().remakes, cardRef, fields, 'submitted') });
+      },
+      // 成长结算：同一 eventId 只加一次经验，已拥有的能力不会重复解锁。
+      settleGrowth: (event) => {
+        const { oc, growthEvents } = get();
+        if (!oc) {
+          return null;
+        }
+
+        const eventId = eventIdFor(event);
+        if (growthEvents.includes(eventId)) {
+          return null;
+        }
+
+        const previousExp = oc.relationExp;
+        const gained = growthForEvent(event);
+        const totalExp = previousExp + gained;
+        const previousLevel = relationLevelForExp(previousExp);
+        const level = relationLevelForExp(totalExp);
+        const unlocks = abilitiesUnlockedBy(event, oc.abilities);
+
+        set({
+          growthEvents: [...growthEvents, eventId],
+          oc: {
+            ...oc,
+            relationExp: totalExp,
+            relationLevel: level,
+            abilities: [...oc.abilities, ...unlocks.map((ability) => ability.id)],
+          },
+        });
+
+        return {
+          eventId,
+          kind: event.kind,
+          gained,
+          previousExp,
+          totalExp,
+          previousLevel,
+          level,
+          levelUp: level > previousLevel,
+          unlocks,
+          personality: oc.personality,
+        };
       },
       resetDemo: () => set({ ...createInitialGameState() }),
     }),
