@@ -4,7 +4,7 @@ import { ResetDemo } from './ResetDemo';
 const routeIndex = [
   { to: '/', end: true, no: '00', en: 'HOME', label: '首页' },
   { to: '/draw', end: false, no: '01', en: 'DRAW', label: '抽卡' },
-  { to: '/learn/preview', end: false, no: '02', en: 'LEARN', label: '学卡' },
+  { to: '/learn', end: false, no: '02', en: 'LEARN', label: '学卡' },
   { to: '/remake/preview', end: false, no: '03', en: 'REMAKE', label: '改卡' },
   { to: '/drift', end: false, no: '04', en: 'DRIFT', label: '漂流' },
   { to: '/oc', end: false, no: '05', en: 'OC', label: 'OC' },

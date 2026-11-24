@@ -60,6 +60,25 @@ describe('pickDailyCards 确定性', () => {
     assert.equal(isNewCard(ids[2], mastery), true);
   });
 
+  it('连续第 3 天（streak = 阈值 - 1）第 3 张即为未学卡', () => {
+    const mastery: Record<string, Mastery> = { l1: 3, l2: 3, l3: 3 };
+    const base = makeContext({
+      cards: cardsOf(['n1', 'n2', 'n3', 'l1', 'l2', 'l3']),
+      mastery,
+      newCardStreak: NO_NEW_CARD_LIMIT - 1,
+    });
+
+    for (let day = 1; day <= 20; day += 1) {
+      const date = `2026-02-${String(day).padStart(2, '0')}`;
+      const ids = pickDailyCards({ ...base, date });
+      assert.equal(
+        isNewCard(ids[2], mastery),
+        true,
+        `${date} 的第 3 张应为未学卡`,
+      );
+    }
+  });
+
   it('无未学卡时保底退回常规抽取', () => {
     const mastery: Record<string, Mastery> = {
       c01: 3,
@@ -76,8 +95,14 @@ describe('pickDailyCards 确定性', () => {
     ids.forEach((id) => assert.equal(isNewCard(id, mastery), false));
   });
 
-  it('空卡池返回空数组', () => {
-    assert.deepEqual(pickDailyCards(makeContext({ cards: [] })), []);
+it('空卡池返回空数组', () => {
+    assert.deepEqual(pickRedrawCards(makeContext({ cards: [] }), { exclude: [], count: DRAW_COUNT }), []);
+  });
+
+  it('同输入的重抽结果可复现', () => {
+    const ctx = makeContext();
+    const options = { exclude: ['c01', 'c02'], count: 2 };
+    assert.deepEqual(pickRedrawCards(ctx, options), pickRedrawCards(ctx, options));
   });
 });
 

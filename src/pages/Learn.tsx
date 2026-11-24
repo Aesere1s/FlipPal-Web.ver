@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import cardsFile from '../data/cards.json';
 import { ProgressRing } from '../components/ProgressRing';
@@ -23,11 +23,18 @@ export default function Learn() {
   const { cardId = 'preview' } = useParams<{ cardId: string }>();
   const mastery = useGameStore((state) => state.mastery) ?? {};
   const todayDraw = useGameStore((state) => state.todayDraw);
+  const learnedToday = useGameStore((state) => state.learnedToday) ?? [];
+  const ensureDailyDraw = useGameStore((state) => state.ensureDailyDraw);
   const recordCardSeen = useGameStore((state) => state.recordCardSeen);
   const recordQuizResult = useGameStore((state) => state.recordQuizResult);
 
   const [stage, setStage] = useState<Stage>('front');
   const [result, setResult] = useState<QuizResult | null>(null);
+
+  // 分享链接直接进入学卡时也补齐今日抽卡，保证进度环的 total 与首页一致。
+  useEffect(() => {
+    ensureDailyDraw();
+  }, [ensureDailyDraw]);
 
   const card = cardsById.get(cardId);
 
@@ -52,8 +59,8 @@ export default function Learn() {
   }
 
   const masteryValue: Mastery = mastery[card.id] ?? 0;
-  const done = countTodayLearned(todayDraw?.cardIds, mastery);
   const total = todayDraw?.cardIds.length ?? 3;
+  const done = countTodayLearned(learnedToday, total);
   const answerText = card.quiz.options[card.quiz.answer] ?? '—';
 
   const handleFlip = () => {
@@ -121,7 +128,10 @@ export default function Learn() {
       ) : (
         <div className={`learn-flip${stage === 'back' ? ' is-flipped' : ''}`}>
           <div className="learn-flip-inner">
-            <article className="learn-face learn-face-front">
+            <article
+              className="learn-face learn-face-front"
+              aria-hidden={stage !== 'front'}
+            >
               <p className="learn-face-label">正面 / QUESTION</p>
               <h2 className="learn-question">{card.front}</h2>
               <button
@@ -134,15 +144,19 @@ export default function Learn() {
               </button>
             </article>
 
-            <article className="learn-face learn-face-back">
-              {stage !== 'front' && (
-                <>
-                  <p className="learn-face-label">背面 / EXPLANATION</p>
-                  <p className="learn-back">{card.back}</p>
-                  <p className="learn-source">来源：{card.source}</p>
-                  <QuizPanel quiz={card.quiz} cardTitle={card.title} onFinish={handleFinish} />
-                </>
-              )}
+            <article
+              className="learn-face learn-face-back"
+              aria-hidden={stage === 'front'}
+            >
+              <p className="learn-face-label">背面 / EXPLANATION</p>
+              <p className="learn-back">{card.back}</p>
+              <p className="learn-source">来源：{card.source}</p>
+              <QuizPanel
+                quiz={card.quiz}
+                cardTitle={card.title}
+                active={stage !== 'front'}
+                onFinish={handleFinish}
+              />
             </article>
           </div>
         </div>

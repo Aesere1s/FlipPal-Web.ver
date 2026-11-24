@@ -14,7 +14,7 @@ export function FlipCard({ card, index, revealed, onReveal }: FlipCardProps) {
   return (
     <article className={revealed ? 'flip-card is-flipped' : 'flip-card'} data-rarity={card.rarity}>
       <div className="flip-card-inner">
-        <div className="flip-card-face flip-card-back">
+        <div className="flip-card-face flip-card-back" aria-hidden={revealed}>
           <button
             type="button"
             className="flip-card-back-button"
@@ -30,7 +30,7 @@ export function FlipCard({ card, index, revealed, onReveal }: FlipCardProps) {
           </button>
         </div>
 
-        <div className="flip-card-face flip-card-front">
+        <div className="flip-card-face flip-card-front" aria-hidden={!revealed}>
           <header className="flip-card-meta">
             <span>NO. {order}</span>
             <span className="flip-card-rarity">{RARITY_LABELS[card.rarity]}</span>

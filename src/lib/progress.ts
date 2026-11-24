@@ -1,18 +1,19 @@
-import type { Mastery } from '../types';
-
+/**
+ * 今日学习进度：按「今日翻过面的卡」计数，上限为今日抽卡张数。
+ * 分享链接直接学卡时同样计入，避免掌握度已变化而进度环仍是 0 / 3。
+ */
 export function countTodayLearned(
-  cardIds: readonly string[] | null | undefined,
-  mastery: Readonly<Record<string, Mastery>>,
+  learnedToday: readonly string[] | null | undefined,
+  total: number,
 ): number {
-  if (!cardIds || cardIds.length === 0) {
+  if (!learnedToday || learnedToday.length === 0) {
     return 0;
   }
 
-  let count = 0;
-  for (const id of cardIds) {
-    if ((mastery[id] ?? 0) >= 1) {
-      count += 1;
-    }
+  const safeTotal = Number.isFinite(total) ? Math.floor(total) : 0;
+  if (safeTotal <= 0) {
+    return 0;
   }
-  return count;
+
+  return Math.min(learnedToday.length, safeTotal);
 }

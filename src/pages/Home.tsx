@@ -1,8 +1,9 @@
-import type { CSSProperties } from 'react';
+import { useEffect, type CSSProperties } from 'react';
 import { useNavigate } from 'react-router-dom';
 import islandHero from '../../assets/hero-learning-island.svg';
 import islandRoute from '../../assets/growth-learning-map.svg';
 import { ProgressRing } from '../components/ProgressRing';
+import { todayKey } from '../lib/draw';
 import { countTodayLearned } from '../lib/progress';
 import { SCHEMA_VERSION, useGameStore } from '../store/gameStore';
 
@@ -24,12 +25,20 @@ export default function Home() {
   const sent = useGameStore((state) => state.sent);
   const oc = useGameStore((state) => state.oc);
   const todayDraw = useGameStore((state) => state.todayDraw);
-  const revealedToday = todayDraw?.revealed.length ?? 0;
-  const drawTotal = todayDraw?.cardIds.length ?? 3;
+  const refreshDailyDraw = useGameStore((state) => state.refreshDailyDraw);
 
+  // 跨天打开首页时刷新已过期的抽卡；空状态（刚重置）不在这里生成新卡。
+  useEffect(() => {
+    refreshDailyDraw();
+  }, [refreshDailyDraw]);
+
+  const todayIsCurrent = todayDraw !== null && todayDraw.date === todayKey();
+  const revealedToday = todayIsCurrent && todayDraw ? todayDraw.revealed.length : 0;
+  const drawTotal = todayIsCurrent && todayDraw ? todayDraw.cardIds.length : 3;
+  const learnedCount = countTodayLearned(todayIsCurrent ? learnedToday : [], drawTotal);
 
   const completed = [
-    revealedToday > 0 || learnedToday.length > 0,
+    revealedToday > 0 || learnedCount > 0,
     Object.keys(mastery).length > 0,
     remakes.length > 0,
     sent.length > 0,
@@ -73,10 +82,7 @@ export default function Home() {
               </small>
             </button>
 
-            <ProgressRing
-              done={countTodayLearned(todayDraw?.cardIds, mastery)}
-              total={todayDraw?.cardIds.length ?? 3}
-            />
+            <ProgressRing done={learnedCount} total={drawTotal} />
           </div>
 
           <article className="island-sample" aria-labelledby="islandSampleTitle">

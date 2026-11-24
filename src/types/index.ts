@@ -127,20 +127,6 @@ export interface OCState {
   abilities: string[];
 }
 
-export interface UserState {
-  schemaVersion: number;
-  nickname: string;
-  trackPref: Track | '';
-  tickets: number;
-  streak: number;
-  mastery: Record<string, Mastery>;
-  learnedToday: string[];
-  remakes: Remake[];
-  sent: DriftItem[];
-  inbox: DriftItem[];
-  lastDrawDate: string;
-  oc: OCState | null;
-}
 
 export interface InboxFile {
   version: number;

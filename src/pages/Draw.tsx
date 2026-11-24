@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import cardsFile from '../data/cards.json';
 import { FlipCard } from '../components/FlipCard';
-import { DRAW_COUNT } from '../lib/draw';
+import { DRAW_COUNT, todayKey } from '../lib/draw';
 import { useGameStore } from '../store/gameStore';
 import type { Card } from '../types';
 
@@ -18,10 +18,12 @@ export default function Draw() {
     ensureDailyDraw();
   }, [ensureDailyDraw]);
 
-  const cardIds = todayDraw?.cardIds ?? [];
-  const revealed = todayDraw?.revealed ?? [];
+  // 跨天首帧持久化的是昨天的牌，先按「正在发牌」渲染，effect 刷新后不会闪出旧卡。
+  const currentDraw = todayDraw && todayDraw.date === todayKey() ? todayDraw : null;
+  const cardIds = currentDraw?.cardIds ?? [];
+  const revealed = currentDraw?.revealed ?? [];
   const allRevealed = cardIds.length > 0 && revealed.length >= cardIds.length;
-  const redrawDisabled = !todayDraw || todayDraw.redrawUsed || allRevealed;
+  const redrawDisabled = !currentDraw || currentDraw.redrawUsed || allRevealed;
 
   return (
     <section className="draw-page shell">
@@ -37,7 +39,7 @@ export default function Draw() {
         今日已翻开 {revealed.length} / {DRAW_COUNT}
       </p>
 
-      {todayDraw ? (
+      {currentDraw ? (
         <div className="draw-grid">
           {cardIds.map((cardId, index) => {
             const card = cardsById.get(cardId);
@@ -64,7 +66,7 @@ export default function Draw() {
           重抽未翻开的卡
         </button>
         <span className="draw-actions-note">
-          {todayDraw?.redrawUsed ? '今日重抽已使用' : '每日一次，只替换尚未翻开的位置'}
+          {currentDraw?.redrawUsed ? '今日重抽已使用' : '每日一次，只替换尚未翻开的位置'}
         </span>
       </div>
     </section>

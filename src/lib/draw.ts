@@ -110,8 +110,10 @@ export function pickDailyCards(ctx: DrawContext): string[] {
   const target = Math.min(DRAW_COUNT, remaining.length);
 
   while (picked.length < target) {
-    // 第 3 次抽取时触发保底：只从未学卡中抽，无未学卡则退回常规加权。
-    const guarantee = ctx.newCardStreak >= NO_NEW_CARD_LIMIT && picked.length === DRAW_COUNT - 1;
+    // newCardStreak 是「截至昨天的连续无新卡天数」：今天算第 streak + 1 天，
+    // 因此连续第 3 天（streak = 2）时第 3 张即触发保底，而不是拖到第 4 天。
+    const guarantee =
+      ctx.newCardStreak + 1 >= NO_NEW_CARD_LIMIT && picked.length === DRAW_COUNT - 1;
     const newCardPool = guarantee ? remaining.filter((id) => isNewCard(id, ctx.mastery)) : [];
     const chosen = pickWeightedOne(
       newCardPool.length > 0 ? newCardPool : remaining,

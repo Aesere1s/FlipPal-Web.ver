@@ -153,3 +153,8 @@ html[data-page-hidden] .flip-card-inner {
   text-decoration: underline;
   text-underline-offset: 4px;
 }
+@media (prefers-reduced-motion: reduce) {
+  .flip-card-inner {
+    transition: none;
+  }
+}

@@ -12,15 +12,22 @@ export interface QuizResult {
 export interface QuizPanelProps {
   quiz: Quiz;
   cardTitle: string;
+  /** 只有翻面后才启动计时与交互；未激活时渲染但禁用，保持容器高度稳定。 */
+  active?: boolean;
   onFinish: (result: QuizResult) => void;
 }
 
 const TICK_MS = 250;
 
-export function QuizPanel({ quiz, cardTitle, onFinish }: QuizPanelProps): JSX.Element {
+export function QuizPanel({
+  quiz,
+  cardTitle,
+  active = true,
+  onFinish,
+}: QuizPanelProps): JSX.Element {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [remainingMs, setRemainingMs] = useState(QUIZ_SECONDS * 1000);
-  const [result, setResult] = useState<QuizResult | null>(null);
+  const [submitted, setSubmitted] = useState(false);
 
   // 倒计时以「剩余毫秒 + 上次 tick 时间戳」推进，暂停时清空时间戳，避免漂移累加。
   const remainingRef = useRef(QUIZ_SECONDS * 1000);
@@ -28,14 +35,20 @@ export function QuizPanel({ quiz, cardTitle, onFinish }: QuizPanelProps): JSX.El
   const finishedRef = useRef(false);
 
   const selectedRef = useRef<number | null>(null);
-  selectedRef.current = selectedIndex;
   const onFinishRef = useRef(onFinish);
-  onFinishRef.current = onFinish;
+
+  useEffect(() => {
+    selectedRef.current = selectedIndex;
+  }, [selectedIndex]);
+
+  useEffect(() => {
+    onFinishRef.current = onFinish;
+  }, [onFinish]);
 
   const finish = useCallback((next: QuizResult) => {
     if (finishedRef.current) return;
     finishedRef.current = true;
-    setResult(next);
+    setSubmitted(true);
     onFinishRef.current(next);
   }, []);
 
@@ -44,7 +57,7 @@ export function QuizPanel({ quiz, cardTitle, onFinish }: QuizPanelProps): JSX.El
   }, [finish]);
 
   useEffect(() => {
-    if (finishedRef.current) return;
+    if (!active || finishedRef.current) return;
 
     let timer: number | null = null;
 
@@ -101,11 +114,7 @@ export function QuizPanel({ quiz, cardTitle, onFinish }: QuizPanelProps): JSX.El
       window.removeEventListener('blur', pause);
       window.removeEventListener('focus', run);
     };
-  }, [timeout, result]);
-
-  const answerIndex = quiz.answer;
-  const answerValid = answerIndex >= 0 && answerIndex < quiz.options.length;
-  const answerText = answerValid ? quiz.options[answerIndex] : '（无）';
+  }, [active, timeout, submitted]);
 
   const handleSelect = (index: number) => {
     if (finishedRef.current) return;
@@ -118,7 +127,11 @@ export function QuizPanel({ quiz, cardTitle, onFinish }: QuizPanelProps): JSX.El
   };
 
   return (
-    <section className="quiz-panel" aria-label={`${cardTitle} 小测`}>
+    <section
+      className="quiz-panel"
+      data-active={active ? 'true' : 'false'}
+      aria-label={`${cardTitle} 小测`}
+    >
       <header className="quiz-panel-head">
         <h2 className="quiz-panel-title">小测</h2>
         <p className="quiz-panel-timer">剩余 {Math.ceil(remainingMs / 1000)} 秒</p>
@@ -126,17 +139,18 @@ export function QuizPanel({ quiz, cardTitle, onFinish }: QuizPanelProps): JSX.El
 
       <p className="quiz-panel-question">{quiz.question}</p>
 
-      <div className="quiz-panel-options">
+      <div className="quiz-panel-options" role="radiogroup" aria-label="选项">
         {quiz.options.map((option, index) => {
           const selected = selectedIndex === index;
           return (
             <button
               key={index}
               type="button"
+              role="radio"
+              aria-checked={selected}
               className={selected ? 'quiz-panel-option is-selected' : 'quiz-panel-option'}
-              aria-pressed={selected}
               onClick={() => handleSelect(index)}
-              disabled={result !== null}
+              disabled={!active || submitted}
             >
               <span className="quiz-panel-option-mark" aria-hidden="true">
                 {String.fromCharCode(65 + index)}
@@ -147,23 +161,14 @@ export function QuizPanel({ quiz, cardTitle, onFinish }: QuizPanelProps): JSX.El
         })}
       </div>
 
-      {result === null ? (
-        <button
-          type="button"
-          className="quiz-panel-submit"
-          onClick={handleSubmit}
-          disabled={selectedIndex === null}
-        >
-          提交
-        </button>
-      ) : (
-        <div className={result.correct ? 'quiz-panel-feedback is-correct' : 'quiz-panel-feedback is-wrong'}>
-          <h3 className="quiz-panel-feedback-title">{result.correct ? '回答正确' : '回答错误'}</h3>
-          {result.timedOut ? <p className="quiz-panel-timeout">已超时，自动交卷</p> : null}
-          <p className="quiz-panel-answer">正确答案：{answerText}</p>
-          <p className="quiz-panel-evidence">依据：{quiz.evidence}</p>
-        </div>
-      )}
+      <button
+        type="button"
+        className="quiz-panel-submit"
+        onClick={handleSubmit}
+        disabled={!active || submitted || selectedIndex === null}
+      >
+        提交
+      </button>
     </section>
   );
 }

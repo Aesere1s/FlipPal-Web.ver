@@ -1,13 +1,11 @@
 import { create } from 'zustand';
 import { persist, type PersistStorage, type StorageValue } from 'zustand/middleware';
 import cardsFile from '../data/cards.json';
-import type { Card } from '../types';
+import type { Card, DriftItem, Mastery, OCState, Remake, Track } from '../types';
 import { isNewCard, pickDailyCards, pickRedrawCards, todayKey } from '../lib/draw';
 
 export const SCHEMA_VERSION = 2;
 export const PERSIST_KEY = 'flip-pal-demo-v1';
-
-export type Mastery = 0 | 1 | 2 | 3;
 
 export interface TodayDraw {
   date: string;
@@ -18,35 +16,23 @@ export interface TodayDraw {
 
 const cardPool = (cardsFile as unknown as { cards: Card[] }).cards;
 
-export interface OCState {
-  personality: 'calm' | 'curious' | 'sharp';
-  parts: {
-    face: number;
-    hair: number;
-    color: number;
-    outfit: number;
-  };
-  relationLevel: number;
-  relationExp: number;
-  abilities: string[];
-}
-
 export interface GameState {
   schemaVersion: number;
   nickname: string;
-  trackPref: string;
+  trackPref: Track | '';
   tickets: number;
   streak: number;
   mastery: Record<string, Mastery>;
   learnedToday: string[];
-  remakes: unknown[];
-  sent: unknown[];
-  inbox: unknown[];
+  remakes: Remake[];
+  sent: DriftItem[];
+  inbox: DriftItem[];
   lastDrawDate: string;
   oc: OCState | null;
   todayDraw: TodayDraw | null;
   newCardStreak: number;
   ensureDailyDraw: () => void;
+  refreshDailyDraw: () => void;
   revealTodayCard: (cardId: string) => void;
   useRedraw: () => void;
   recordCardSeen: (cardId: string) => void;
@@ -57,6 +43,7 @@ export interface GameState {
 type GameStateData = Omit<
   GameState,
   | 'ensureDailyDraw'
+  | 'refreshDailyDraw'
   | 'revealTodayCard'
   | 'useRedraw'
   | 'recordCardSeen'
@@ -140,6 +127,7 @@ export const useGameStore = create<GameState>()(
   persist(
     (set, get) => ({
       ...createInitialGameState(),
+      // 生成今日抽卡。跨天后首次调用时同时清空「今日已学」，避免昨天的学习记录残留。
       ensureDailyDraw: () => {
         const { todayDraw, mastery, newCardStreak, nickname } = get();
         const today = todayKey();
@@ -159,7 +147,16 @@ export const useGameStore = create<GameState>()(
           todayDraw: { date: today, cardIds, revealed: [], redrawUsed: false },
           lastDrawDate: today,
           newCardStreak: hasNewCard ? 0 : newCardStreak + 1,
+          learnedToday: [],
         });
+      },
+      // 只刷新已过期的一天，不替「重置演示」后的空状态生成新卡。
+      refreshDailyDraw: () => {
+        const { todayDraw } = get();
+        if (!todayDraw || todayDraw.date === todayKey()) {
+          return;
+        }
+        get().ensureDailyDraw();
       },
       revealTodayCard: (cardId) => {
         const { todayDraw } = get();
@@ -195,6 +192,11 @@ export const useGameStore = create<GameState>()(
           },
           { exclude: todayDraw.cardIds, count: pendingIndexes.length },
         );
+
+        // 可用卡不足时宁可不消耗重抽次数，也不要出现「点了没变化却永久置灰」。
+        if (replacements.length === 0) {
+          return;
+        }
 
         const cardIds = [...todayDraw.cardIds];
         pendingIndexes.forEach((cardIndex, position) => {

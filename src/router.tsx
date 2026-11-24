@@ -6,6 +6,7 @@ import Drift from './pages/Drift';
 import Draw from './pages/Draw';
 import Home from './pages/Home';
 import Learn from './pages/Learn';
+import LearnIndex from './pages/LearnIndex';
 import OC from './pages/OC';
 import Remake from './pages/Remake';
 
@@ -16,7 +17,8 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
       { path: 'draw', element: <Draw /> },
-      { path: 'learn', element: <Navigate to="/learn/preview" replace /> },
+      { path: 'learn', element: <LearnIndex /> },
+      { path: 'learn/preview', element: <Navigate to="/learn" replace /> },
       { path: 'learn/:cardId', element: <Learn /> },
       { path: 'remake', element: <Navigate to="/remake/preview" replace /> },
       { path: 'remake/:cardId', element: <Remake /> },
