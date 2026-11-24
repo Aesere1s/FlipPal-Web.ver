@@ -11,7 +11,9 @@
     "validate:cards": "node scripts/validate-cards.mjs",
     "test:draw": "node --experimental-strip-types --test scripts/test-draw.test.ts",
     "verify:l2": "node scripts/verify-l2.cjs",
-    "verify:l3": "node scripts/verify-l3.cjs"
+    "verify:l3": "node scripts/verify-l3.cjs",
+    "verify:l4": "node scripts/verify-l4.cjs",
+    "verify:l5": "node scripts/verify-l5.cjs"
   },
   "dependencies": {
     "react": "^18.3.1",

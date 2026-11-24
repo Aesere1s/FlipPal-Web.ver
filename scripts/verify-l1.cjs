@@ -214,7 +214,7 @@ async function main() {
           sources: `${pool.sourceCount} 个来源全部非空`,
           evidence: '展开卡片后小测答案与背面依据可见',
           mobile: '375px 无横向滚动',
-          l0Regression: '首页 7 路由与禁用抽卡按钮保持',
+          l0Regression: '首页 7 路由与可用抽卡入口保持',
           screenshots: ['l1-card-pool-desktop.png', 'l1-card-pool-mobile.png'],
           runtimeErrors,
         },

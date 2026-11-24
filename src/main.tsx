@@ -12,6 +12,8 @@ import './styles/flip-card.css';
 import './styles/learn.css';
 import './styles/quiz.css';
 import './styles/progress-ring.css';
+import './styles/oc.css';
+import './styles/remake.css';
 
 const root = document.getElementById('root');
 

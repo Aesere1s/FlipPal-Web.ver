@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import cardsFile from '../data/cards.json';
 import { ProgressRing } from '../components/ProgressRing';
+import { OCBubble } from '../components/OCBubble';
 import { QuizPanel, type QuizResult } from '../components/QuizPanel';
+import { getPersonalityPreset } from '../lib/ocLines';
 import { countTodayLearned } from '../lib/progress';
 import { useGameStore } from '../store/gameStore';
 import { TRACK_LABELS, type Card, type Mastery } from '../types';
@@ -27,6 +29,7 @@ export default function Learn() {
   const ensureDailyDraw = useGameStore((state) => state.ensureDailyDraw);
   const recordCardSeen = useGameStore((state) => state.recordCardSeen);
   const recordQuizResult = useGameStore((state) => state.recordQuizResult);
+  const oc = useGameStore((state) => state.oc);
 
   const [stage, setStage] = useState<Stage>('front');
   const [result, setResult] = useState<QuizResult | null>(null);
@@ -93,6 +96,16 @@ export default function Learn() {
           </span>
         </p>
       </header>
+
+      {oc && (
+        <OCBubble
+          className="learn-oc"
+          oc={oc}
+          text={stage === 'result'
+            ? `${getPersonalityPreset(oc.personality).tagline} 小测已经结束，接下来试着把这张卡说成自己的版本。`
+            : `${getPersonalityPreset(oc.personality).tagline} 先翻到背面，再告诉我哪里最难讲清楚。`}
+        />
+      )}
 
       {stage === 'result' && result ? (
         <section className="learn-result" aria-live="polite">

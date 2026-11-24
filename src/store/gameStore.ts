@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist, type PersistStorage, type StorageValue } from 'zustand/middleware';
 import cardsFile from '../data/cards.json';
-import type { Card, DriftItem, Mastery, OCState, Remake, Track } from '../types';
+import type { Card, DriftItem, Mastery, OCParts, OCPersonality, OCState, Remake, RemakeFields, Track } from '../types';
 import { isNewCard, pickDailyCards, pickRedrawCards, todayKey } from '../lib/draw';
 
 export const SCHEMA_VERSION = 2;
@@ -37,6 +37,9 @@ export interface GameState {
   useRedraw: () => void;
   recordCardSeen: (cardId: string) => void;
   recordQuizResult: (cardId: string, correct: boolean) => void;
+  saveOC: (personality: OCPersonality, parts: OCParts) => void;
+  saveRemakeDraft: (cardRef: string, fields: RemakeFields) => void;
+  submitRemake: (cardRef: string, fields: RemakeFields) => void;
   resetDemo: () => void;
 }
 
@@ -48,6 +51,9 @@ type GameStateData = Omit<
   | 'useRedraw'
   | 'recordCardSeen'
   | 'recordQuizResult'
+  | 'saveOC'
+  | 'saveRemakeDraft'
+  | 'submitRemake'
   | 'resetDemo'
 >;
 
@@ -228,6 +234,24 @@ export const useGameStore = create<GameState>()(
         }
         set({ mastery: { ...mastery, [cardId]: nextMastery } });
       },
+      saveOC: (personality, parts) => {
+        const current = get().oc;
+        set({
+          oc: {
+            personality,
+            parts: { ...parts },
+            relationLevel: current?.relationLevel ?? 1,
+            relationExp: current?.relationExp ?? 0,
+            abilities: current?.abilities ?? [],
+          },
+        });
+      },
+      saveRemakeDraft: (cardRef, fields) => {
+        set({ remakes: upsertRemake(get().remakes, cardRef, fields, 'draft') });
+      },
+      submitRemake: (cardRef, fields) => {
+        set({ remakes: upsertRemake(get().remakes, cardRef, fields, 'submitted') });
+      },
       resetDemo: () => set({ ...createInitialGameState() }),
     }),
     {
@@ -237,3 +261,28 @@ export const useGameStore = create<GameState>()(
     },
   ),
 );
+
+function upsertRemake(
+  remakes: Remake[],
+  cardRef: string,
+  fields: RemakeFields,
+  status: 'draft' | 'submitted',
+): Remake[] {
+  const existing = remakes.find((remake) => remake.cardRef === cardRef);
+  const now = new Date().toISOString();
+  const next: Remake = {
+    id: existing?.id ?? `remake-${cardRef}`,
+    cardRef,
+    front: fields.front.trim(),
+    explanation: fields.explanation.trim(),
+    example: fields.example.trim(),
+    source: fields.source.trim(),
+    status,
+    createdAt: existing?.createdAt ?? now,
+    updatedAt: now,
+  };
+
+  return existing
+    ? remakes.map((remake) => (remake.cardRef === cardRef ? next : remake))
+    : [...remakes, next];
+}

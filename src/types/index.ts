@@ -82,6 +82,8 @@ export interface Remake {
   updatedAt: string;
 }
 
+export type RemakeFields = Pick<Remake, 'front' | 'explanation' | 'example' | 'source'>;
+
 export type OCPersonality = 'calm' | 'curious' | 'sharp';
 
 export type OCPartKind = 'face' | 'hair' | 'color' | 'outfit';

@@ -118,71 +118,36 @@
     .loop-nav a.is-active span { opacity: 1; }
     /* 规格 4：强调色只标记学习闭环中的当前阶段，不装饰普通导航。 */
 
-    .hero { position: relative; padding-top: 64px; padding-bottom: 104px; }
-    .hero-kicker { grid-column: 1 / -1; display: flex; justify-content: space-between; margin-bottom: 24px; }
+    .hero { padding-top: 40px; padding-bottom: 88px; }
+    .hero-kicker { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 16px; margin-bottom: 32px; }
+    .hero-visual { display: flex; justify-content: center; margin: 0; }
+    .hero-visual img { display: block; width: auto; max-width: 100%; max-height: min(48vh, 560px); height: auto; }
+    .hero-intro {
+      display: grid;
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      gap: var(--gutter);
+      align-items: start;
+      margin-top: 28px;
+    }
+    .hero-intro > * { min-width: 0; }
     .hero-title {
-      grid-column: 1 / 12;
-      grid-row: 2;
-      position: relative;
-      z-index: 2;
       margin: 0;
       font-family: var(--font-display);
-      font-size: var(--display);
+      font-size: clamp(56px, 6.8vw, 116px);
       font-weight: 600;
       line-height: .86;
-      letter-spacing: -.075em;
-      pointer-events: none;
+      letter-spacing: -.06em;
     }
     .hero-title em { display: inline-block; font-weight: 600; transform: rotate(-2deg); transform-origin: left center; }
-    .hero-copy { grid-column: 1 / 5; grid-row: 3; margin-top: 40px; }
+    .hero-copy { margin: 0 0 8px; }
     .hero-copy .lead, .lead { margin: 0 0 24px; font-size: var(--lead); line-height: 1.4; font-weight: 500; }
-    .hero-copy p:not(.lead) { max-width: 34ch; margin: 0 0 40px; }
-    .hero-demo {
-      grid-column: 5 / 13;
-      grid-row: 3;
-      position: relative;
-      margin-top: -112px;
-      transform: rotate(1.25deg);
-    }
-    /* 规格 2、5：标题与扩大后的插画卡保持 112px 错位重叠，卡片左移一列形成共同焦点。 */
+    .hero-copy p:not(.lead) { max-width: 32ch; margin: 0 0 32px; }
+    /* 首屏：品牌导航下整幅小镇主视觉，标题与介绍放在图下，文字不覆盖图片。 */
 
     .hard-shadow { box-shadow: 7px 7px 0 var(--ink); }
     /* 全站唯一阴影：7px 硬阴影，无模糊、无第二种投影。 */
 
-    .specimen { overflow: hidden; border: 2px solid var(--ink); background: var(--paper); }
-    .specimen-head { display: flex; justify-content: space-between; gap: 16px; padding: 16px 24px; border-bottom: 1px solid currentColor; background: var(--paper); }
-    .specimen-visual { position: relative; margin: 0; border-bottom: 1px solid var(--ink); background: var(--sky); }
-    .specimen-visual img { display: block; width: 100%; height: auto; aspect-ratio: 1200 / 760; object-fit: contain; }
-    .specimen-visual figcaption {
-      position: absolute;
-      left: 16px;
-      bottom: 16px;
-      max-width: 330px;
-      padding: 8px 12px;
-      border: 1px solid var(--ink);
-      background: var(--paper);
-      font-size: var(--meta);
-      line-height: 1.4;
-    }
-    .specimen-visual figcaption strong { display: block; margin-bottom: 4px; }
-    .specimen-body { display: grid; grid-template-columns: 1.35fr 1fr; gap: 24px; padding: 24px 32px 40px; background: var(--paper); }
-    .specimen-question { max-width: 19ch; margin: 0; font-family: var(--font-display); font-size: clamp(32px, 4vw, 56px); line-height: 1.08; letter-spacing: -.04em; }
-    .specimen-foot { display: flex; flex-direction: column; justify-content: space-between; gap: 24px; margin: 0; }
-    .specimen-foot p { max-width: 30ch; margin: 0; }
-    .specimen-foot .meta { width: fit-content; padding: 8px; background: var(--sun); color: var(--ink); }
-    .oc-note {
-      position: absolute;
-      right: 24px;
-      bottom: -24px;
-      max-width: 220px;
-      padding: 16px;
-      border: 1px solid var(--ink);
-      background: var(--accent);
-      transform: rotate(-5deg);
-      font-size: var(--meta);
-    }
-    /* 图像方法：场景占据样卡上半部，题目与答案线索留在下半部；OC 便签只压边界，不遮挡正文。 */
-    /* 插配色：米白 #f2f0e6／纸张 #fff9e9 为底，墨绿 #19201b 为轮廓，天空蓝 #8fcbd3 扩大图像面积，橙 #ff5c35 与黄 #ffc857 只标记冲突和线索。 */
+    /* 首屏不再使用知识卡样张；知识卡视觉保留在后续抽卡与学卡区块。 */
 
     .button {
       min-height: 48px;
@@ -379,9 +344,8 @@
     .page-footer p { margin: 0; }
 
     @media (max-width: 900px) {
-      .hero-title { grid-column: 1 / -1; }
-      .hero-copy { grid-column: 1 / 6; }
-      .hero-demo { grid-column: 6 / 13; }
+      .hero-intro { grid-template-columns: minmax(0, 1fr); gap: 32px; align-items: start; }
+      .hero-title { font-size: clamp(64px, 13vw, 112px); }
       .section-heading { grid-column: 1 / 10; }
       .learn-card { grid-column: 1 / 8; }
       .quiz-panel { grid-column: 8 / 13; }
@@ -398,16 +362,11 @@
       .brand strong { font-size: 32px; }
       .brand span { display: none; }
       .loop-nav a { min-height: 56px; flex-direction: column; justify-content: center; gap: 2px; padding: 8px 4px; }
-      .hero { padding-top: 40px; padding-bottom: 64px; }
-      .hero-kicker { grid-column: 1 / -1; }
-      .hero-title, .hero-copy, .hero-demo { grid-column: 1 / -1; grid-row: auto; }
-      .hero-copy { margin-top: 40px; }
-      .hero-demo { margin-top: 40px; transform: rotate(.6deg); }
-      .specimen-body { display: block; min-height: 0; padding: 24px; }
-      .specimen-question { font-size: 32px; }
-      .specimen-foot { margin-top: 24px; gap: 16px; }
-      .specimen-visual figcaption { left: 8px; bottom: 8px; max-width: calc(100% - 16px); padding: 8px; }
-      .oc-note { position: static; max-width: none; margin-top: 16px; transform: rotate(-2deg); }
+      .hero { padding-top: 32px; padding-bottom: 56px; }
+      .hero-kicker { margin-bottom: 24px; }
+      .hero-visual img { width: 100%; max-height: none; }
+      .hero-intro { margin-top: 28px; gap: 24px; }
+      .hero-copy p:not(.lead) { max-width: none; }
       .flow-section { padding-top: 64px; padding-bottom: 64px; }
       .section-rule, .section-heading, .section-aside { grid-column: 1 / -1; }
       .section-heading { margin-bottom: 40px; }
@@ -455,30 +414,18 @@
   <div class="viewport-rule" aria-hidden="true"></div>
 
   <main id="top">
-    <section class="hero shell grid" aria-labelledby="heroTitle">
+    <section class="hero shell" aria-labelledby="heroTitle">
       <div class="hero-kicker eyebrow"><span>不是收藏答案，是交换理解</span><span>3 分钟 / 1 次完整循环</span></div>
-      <h1 class="hero-title" id="heroTitle">把理解<br><em>翻出来。</em></h1>
-      <div class="hero-copy">
-        <p class="lead">一张卡，一次表达，一位会记住你说过什么的 OC。</p>
-        <p>抽卡开始，翻卡理解，用自己的话重写，再把它寄给另一位读者。成长不是打卡次数，而是你真的讲明白了一件事。</p>
-        <a class="button primary" href="#draw">开始今天的一张 <span aria-hidden="true">↓</span></a>
-      </div>
-      <div class="hero-demo">
-        <article class="specimen hard-shadow" aria-label="今日知识卡示例：沉没成本">
-          <div class="specimen-head card-kicker"><span>今日样张 / COGNITION</span><span>难度 02</span></div>
-          <figure class="specimen-visual">
-            <img src="../assets/hero-learning-town.png" alt="温馨的欧式小镇广场：有人在长椅和桌边读书思考，有人伏案写卡片，也有人把卡片递给同伴。" width="1200" height="760">
-            <figcaption><strong>继续绕圈，还是剪断离场？</strong>胶片是已经付出的时间；出口只计算接下来的选择。原创场景，不使用角色素材。</figcaption>
-          </figure>
-          <div class="specimen-body">
-            <h2 class="specimen-question">已经付出的成本，为什么不该决定下一步？</h2>
-            <div class="specimen-foot">
-              <p>答案线索：先放下“已经花了多少”，只比较从现在开始，继续与停下各自还要付出什么。</p>
-              <span class="meta">SUNK COST<br>01 / 03</span>
-            </div>
-          </div>
-        </article>
-        <aside class="oc-note">OC「阿翻」：别只点头。等会儿，我要听你举一个新的例子。</aside>
+      <figure class="hero-visual">
+        <img src="../assets/hero-learning-town.webp" alt="温馨的欧式小镇广场：有人在长椅和桌边读书思考，有人伏案写卡片，也有人把卡片递给同伴。" width="1774" height="887">
+      </figure>
+      <div class="hero-intro">
+        <h1 class="hero-title" id="heroTitle">把理解<br><em>翻出来。</em></h1>
+        <div class="hero-copy">
+          <p class="lead">一张卡，一次表达，一位会记住你说过什么的 OC。</p>
+          <p>抽卡开始，翻卡理解，用自己的话重写，再把它寄给另一位读者。成长不是打卡次数，而是你真的讲明白了一件事。</p>
+          <a class="button primary" href="#draw">开始今天的一张 <span aria-hidden="true">↓</span></a>
+        </div>
       </div>
     </section>
     <!-- 首屏由规格 2 的跨列与规格 5 的错位推出：产品实物与标题重叠，而非居中口号加通用面板。 -->

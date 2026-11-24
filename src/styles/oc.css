@@ -1,0 +1,486 @@
+.oc-page {
+  padding-block: 48px 88px;
+}
+
+.oc-head {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  align-items: end;
+  gap: var(--gutter);
+  margin-bottom: 40px;
+}
+
+.oc-head .eyebrow {
+  margin: 0 0 16px;
+  color: var(--color-primary);
+}
+
+.oc-head h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-page);
+  font-weight: 600;
+  line-height: 0.8;
+  letter-spacing: -0.07em;
+}
+
+.oc-head-lede {
+  max-width: 32ch;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(24px, 2.6vw, 38px);
+  line-height: 1.12;
+  letter-spacing: -0.035em;
+}
+
+.oc-step-list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0 0 24px;
+  padding: 0;
+  border: var(--border);
+  list-style: none;
+}
+
+.oc-step-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  min-height: 56px;
+  padding: 16px;
+  border-right: var(--border);
+  color: var(--color-muted);
+}
+
+.oc-step-list li:last-child {
+  border-right: 0;
+}
+
+.oc-step-list li.is-current {
+  background: var(--color-primary);
+  color: var(--color-ink);
+}
+
+.oc-step-list li.is-done {
+  background: var(--color-sun);
+  color: var(--color-ink);
+}
+
+.oc-step-list span {
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.oc-workbench {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  align-items: start;
+  gap: var(--gutter);
+}
+
+.oc-preview {
+  position: sticky;
+  top: 24px;
+  padding: clamp(20px, 3vw, 36px);
+  border: var(--border);
+  background: var(--color-secondary);
+  box-shadow: var(--shadow-hard);
+}
+
+.oc-preview-label {
+  margin: 0 0 20px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+}
+
+.oc-preview .oc-avatar {
+  width: 100%;
+  height: auto;
+  transform: rotate(-1.5deg);
+}
+
+.oc-preview-caption {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 20px;
+  padding-top: 12px;
+  border-top: var(--border);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.oc-editor {
+  min-width: 0;
+  padding: clamp(24px, 3.2vw, 48px);
+  border: var(--border);
+  background: var(--color-paper-sheet);
+}
+
+.oc-step {
+  min-height: 460px;
+}
+
+.oc-step .eyebrow {
+  margin: 0 0 16px;
+  color: var(--color-muted);
+}
+
+.oc-step h2 {
+  max-width: 15ch;
+  margin: 0 0 20px;
+  font-family: var(--font-display);
+  font-size: clamp(36px, 4vw, 58px);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+.oc-step-lede {
+  max-width: 42ch;
+  margin: 0 0 28px;
+  color: var(--color-muted);
+}
+
+.oc-personality-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.oc-personality-option,
+.oc-part-option {
+  border: var(--border);
+  border-radius: 0;
+  background: transparent;
+  color: var(--color-ink);
+  cursor: pointer;
+}
+
+.oc-personality-option {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-height: 180px;
+  padding: 16px;
+  text-align: left;
+}
+
+.oc-personality-option > span {
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.oc-personality-option strong {
+  margin-block: auto 12px;
+  font-family: var(--font-display);
+  font-size: 32px;
+}
+
+.oc-personality-option small {
+  line-height: 1.5;
+}
+
+.oc-personality-option[aria-pressed='true'],
+.oc-part-option[aria-pressed='true'] {
+  background: var(--color-sun);
+  box-shadow: 4px 4px 0 var(--color-ink);
+  transform: translate(-2px, -2px);
+}
+
+.oc-required-note {
+  margin: 20px 0 0;
+  color: var(--color-muted);
+  font-size: 13px;
+}
+
+.oc-voice-sample {
+  margin: 40px 0;
+  padding: 24px 0;
+  border-block: var(--border);
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3.4vw, 48px);
+  line-height: 1.2;
+  letter-spacing: -0.04em;
+}
+
+.oc-voice-spec,
+.oc-confirm-spec {
+  display: grid;
+  gap: 0;
+  margin: 0;
+}
+
+.oc-voice-spec > div,
+.oc-confirm-spec > div {
+  display: grid;
+  grid-template-columns: 112px 1fr;
+  gap: 16px;
+  padding-block: 16px;
+  border-bottom: 1px solid var(--color-rule);
+}
+
+.oc-voice-spec dt,
+.oc-confirm-spec dt {
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.oc-voice-spec dd,
+.oc-confirm-spec dd {
+  margin: 0;
+}
+
+.oc-step-heading-row {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.oc-randomize {
+  flex: none;
+}
+
+.oc-part-groups {
+  display: grid;
+  gap: 20px;
+}
+
+.oc-part-group {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.oc-part-group legend {
+  margin-bottom: 10px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.oc-part-options {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.oc-part-option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 8px;
+}
+
+.oc-color-chip {
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--color-ink);
+}
+
+.oc-later {
+  margin-top: 24px;
+}
+
+.oc-editor-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: var(--border);
+}
+
+.oc-editor-actions button,
+.oc-editor-actions a {
+  cursor: pointer;
+}
+
+.oc-editor-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.42;
+}
+
+.oc-avatar {
+  display: block;
+  max-width: 100%;
+}
+
+.oc-bubble {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: 24px;
+  padding: 24px;
+  border: var(--border);
+  background: var(--color-ink);
+  color: var(--color-paper-sheet);
+}
+
+.oc-bubble-avatar {
+  width: 96px;
+  height: 96px;
+}
+
+.oc-bubble-label {
+  margin: 0 0 12px;
+  color: var(--color-secondary);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+}
+
+.oc-bubble-text {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(20px, 2vw, 28px);
+  line-height: 1.35;
+}
+
+.oc-bubble-action {
+  display: inline-block;
+  margin-top: 16px;
+  color: var(--color-sun);
+  text-underline-offset: 4px;
+}
+
+.home-oc {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  align-items: center;
+  gap: var(--gutter);
+  padding-block: 0 88px;
+}
+
+.home-oc-intro h2 {
+  margin: 8px 0 16px;
+  font-family: var(--font-display);
+  font-size: clamp(36px, 4vw, 58px);
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+.home-oc-intro p:last-child {
+  max-width: 34ch;
+  margin: 0;
+  color: var(--color-muted);
+}
+
+.home-oc-empty {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 28px;
+  border: var(--border);
+  background: var(--color-sun);
+  box-shadow: var(--shadow-hard);
+}
+
+.home-oc-empty p {
+  margin: 0;
+  font-weight: 600;
+}
+
+.learn-oc {
+  margin-bottom: 32px;
+}
+
+@media (max-width: 900px) {
+  .oc-workbench,
+  .home-oc {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .oc-preview {
+    position: static;
+  }
+
+  .oc-preview .oc-avatar {
+    width: min(100%, 440px);
+    margin-inline: auto;
+  }
+
+  .oc-step {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .oc-page {
+    padding-block: 40px 64px;
+  }
+
+  .oc-head {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+
+  .oc-step-list li {
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px 8px;
+  }
+
+  .oc-editor {
+    padding: 24px 20px;
+  }
+
+  .oc-personality-options {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .oc-personality-option {
+    min-height: 128px;
+  }
+
+  .oc-personality-option strong {
+    margin-top: 24px;
+  }
+
+  .oc-step-heading-row,
+  .home-oc-empty {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .oc-randomize {
+    width: 100%;
+  }
+
+  .oc-part-options {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .oc-editor-actions {
+    flex-direction: column-reverse;
+  }
+
+  .oc-editor-actions .button {
+    width: 100%;
+  }
+
+  .oc-bubble {
+    grid-template-columns: 64px minmax(0, 1fr);
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .oc-bubble-avatar {
+    width: 64px;
+    height: 64px;
+  }
+
+  .oc-voice-spec > div,
+  .oc-confirm-spec > div {
+    grid-template-columns: 88px 1fr;
+  }
+
+  .home-oc {
+    padding-bottom: 64px;
+  }
+}

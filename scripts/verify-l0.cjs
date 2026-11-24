@@ -7,8 +7,8 @@ const BASE = process.env.FLIPPAL_BASE_URL || 'http://127.0.0.1:5173';
 const CDP_PORT = process.env.FLIPPAL_CDP_PORT || '9222';
 const ROUTES = [
   { path: '/', heading: '把理解翻出来。' },
-  { path: '/draw', heading: '抽卡' },
-  { path: '/learn/preview', heading: '学卡' },
+  { path: '/draw', heading: '今日抽卡。' },
+  { path: '/learn', headingPrefix: '学卡' },
   { path: '/remake/preview', heading: '改卡' },
   { path: '/drift', heading: '漂流' },
   { path: '/oc', heading: 'OC' },
@@ -157,7 +157,7 @@ async function main() {
     const home = await readPage();
     assert.equal(home.heading, '把理解翻出来。');
     assert.equal(home.navCount, 7);
-    assert.equal(home.triggerDisabled, true);
+    assert.equal(home.triggerDisabled, false);
     assert.equal(home.storage, null);
     assert.equal(home.path, '/');
     assert.ok(home.scrollWidth <= 1440);
@@ -171,7 +171,11 @@ async function main() {
     for (const route of ROUTES) {
       await navigate(route.path);
       const pageState = await readPage();
-      assert.equal(pageState.heading, route.heading, `${route.path} 标题不匹配`);
+      if (route.heading) {
+        assert.equal(pageState.heading, route.heading, `${route.path} 标题不匹配`);
+      } else {
+        assert.ok(pageState.heading.startsWith(route.headingPrefix), `${route.path} 标题不匹配`);
+      }
       assert.equal(pageState.navCount, 7);
       assert.ok(pageState.scrollWidth <= pageState.innerWidth, `${route.path} 桌面横向溢出`);
     }
@@ -180,11 +184,11 @@ async function main() {
     await capture('l0-draw-placeholder');
 
     await navigate('/learn');
-    assert.equal((await readPage()).path, '/learn/preview');
+    assert.ok((await readPage()).path.startsWith('/learn'), '/learn 应落在学卡路由');
 
     await navigate('/learn/card-preview');
     await reload();
-    assert.equal((await readPage()).heading, '学卡');
+    assert.ok((await readPage()).heading.startsWith('学卡'));
 
     await navigate('/');
     await evaluate(`localStorage.setItem('flip-pal-demo-v1', JSON.stringify({ version: 1, state: { schemaVersion: 1, nickname: 'dirty' } }))`);
@@ -205,18 +209,26 @@ async function main() {
     assert.equal(afterStaleVersion.storage, null);
     assert.equal(afterStaleVersion.heading, '把理解翻出来。');
 
-    await navigate('/learn/preview?demo=fresh');
+    await navigate('/about?demo=fresh');
     const afterFresh = await readPage();
-    assert.equal(afterFresh.path, '/');
-    assert.equal(afterFresh.heading, '把理解翻出来。');
+    assert.equal(afterFresh.path, '/about');
+    assert.equal(afterFresh.heading, '关于');
     assert.equal(afterFresh.storage, null);
+    assert.ok(!afterFresh.search.includes('demo=fresh'), 'fresh 参数应被抹掉');
 
     await setViewport(375, 1000, true);
     await navigate('/about');
     for (const route of ROUTES) {
       await navigate(route.path);
       const mobileState = await readPage();
-      assert.equal(mobileState.heading, route.heading, `${route.path} 移动端标题不匹配`);
+      if (route.heading) {
+        assert.equal(mobileState.heading, route.heading, `${route.path} 移动端标题不匹配`);
+      } else {
+        assert.ok(
+          mobileState.heading.startsWith(route.headingPrefix),
+          `${route.path} 移动端标题不匹配`,
+        );
+      }
       assert.ok(mobileState.scrollWidth <= 375, `${route.path} 移动端横向溢出：${mobileState.scrollWidth}`);
       assert.ok(mobileState.bodyScrollWidth <= 375, `${route.path} 移动端 body 横向溢出：${mobileState.bodyScrollWidth}`);
       assert.equal(mobileState.bodyFontSize, '16px');
@@ -225,7 +237,7 @@ async function main() {
     await navigate('/');
     await capture('l0-home-mobile');
     const mobileHome = await readPage();
-    assert.equal(mobileHome.triggerDisabled, true);
+    assert.equal(mobileHome.triggerDisabled, false);
 
     await setViewport(320, 900, true);
     await navigate('/');
@@ -235,7 +247,7 @@ async function main() {
     await setViewport(1440, 1100, false);
     await evaluate(`document.querySelector('.route-index a:nth-child(2)').click()`);
     await waitFor(`location.pathname === '/draw'`, '导航跳转');
-    assert.equal((await readPage()).heading, '抽卡');
+    assert.equal((await readPage()).heading, '今日抽卡。');
 
     const finalState = await readPage();
     assert.deepEqual(runtimeErrors, []);
@@ -247,7 +259,7 @@ async function main() {
           routes: ROUTES.length,
           viewport: { desktop: '1440x1100', mobile: '375x1000', narrow: '320x900' },
           reset: '二次确认、清空存储、回到首页',
-          freshDemo: '?demo=fresh 在深路由上回到首页并清空状态',
+          freshDemo: '?demo=fresh 在深路由上清空状态、保留路径并抹掉参数',
           navigation: '路由索引点击跳转通过',
           screenshots: ['l0-home-desktop.png', 'l0-home-mobile.png', 'l0-draw-placeholder.png'],
           runtimeErrors,

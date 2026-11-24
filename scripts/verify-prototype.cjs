@@ -62,31 +62,31 @@ async function main() {
     const result = await send('Page.captureScreenshot', { format: 'png', fromSurface: true });
     fs.writeFileSync(`screenshots/${name}.png`, Buffer.from(result.data, 'base64'));
   };
-  const metrics = () => evaluate(`(() => ({
-    innerWidth,
-    scrollWidth: document.documentElement.scrollWidth,
-    bodyScrollWidth: document.body.scrollWidth,
-    bodyFontSize: getComputedStyle(document.body).fontSize,
-    loadedImages: [...document.images].filter(img => img.complete && img.naturalWidth > 0).length,
-    imageCount: document.images.length,
-    heroOverlap: (() => {
-      const title = document.querySelector('.hero-title').getBoundingClientRect();
-      const card = document.querySelector('.specimen').getBoundingClientRect();
-      return Math.max(0, Math.min(title.bottom, card.bottom) - Math.max(title.top, card.top));
-    })(),
-    titleLabelOverlap: (() => {
-      const a = document.querySelector('.hero-title').getBoundingClientRect();
-      const b = document.querySelector('.specimen-head').getBoundingClientRect();
-      return Math.max(0, Math.min(a.right, b.right) - Math.max(a.left, b.left)) * Math.max(0, Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top));
-    })(),
-    titleQuestionOverlap: (() => {
-      const a = document.querySelector('.hero-title').getBoundingClientRect();
-      const b = document.querySelector('.specimen-question').getBoundingClientRect();
-      return Math.max(0, Math.min(a.right, b.right) - Math.max(a.left, b.left)) * Math.max(0, Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top));
-    })(),
-    questionTop: Math.round(document.querySelector('.specimen-question').getBoundingClientRect().top),
-    productionNotes: document.body.innerText.includes('原创场景') || document.body.innerText.includes('不使用角色素材')
-  }))()`);
+  const metrics = () => evaluate(`(() => {
+    const rect = (selector) => document.querySelector(selector)?.getBoundingClientRect() ?? null;
+    const overlapX = (a, b) => (a && b ? Math.max(0, Math.min(a.right, b.right) - Math.max(a.left, b.left)) : 0);
+    const overlapY = (a, b) => (a && b ? Math.max(0, Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top)) : 0);
+    const overlap = (a, b) => (overlapX(a, b) > 0 ? overlapY(a, b) : 0);
+    const title = rect('.hero-title');
+    const visual = rect('.hero-visual');
+    const kicker = rect('.hero-kicker');
+    const lead = rect('.hero-copy .lead');
+    return {
+      innerWidth,
+      innerHeight,
+      scrollWidth: document.documentElement.scrollWidth,
+      bodyScrollWidth: document.body.scrollWidth,
+      bodyFontSize: getComputedStyle(document.body).fontSize,
+      loadedImages: [...document.images].filter(img => img.complete && img.naturalWidth > 0).length,
+      imageCount: document.images.length,
+      titleImageOverlap: Math.round(overlap(title, visual)),
+      titleKickerOverlap: Math.round(overlap(title, kicker)),
+      titleLeadOverlap: Math.round(overlap(title, lead)),
+      titleBottom: title ? Math.round(title.bottom) : 0,
+      titleVisible: title ? title.bottom <= innerHeight : false,
+      productionNotes: document.body.innerText.includes('原创场景') || document.body.innerText.includes('不使用角色素材')
+    };
+  })()`);
 
   try {
     await send('Page.enable');
@@ -99,6 +99,8 @@ async function main() {
     assert.ok(mobile.bodyScrollWidth <= 375);
     assert.equal(mobile.bodyFontSize, '16px');
     assert.equal(mobile.loadedImages, mobile.imageCount);
+    assert.equal(mobile.titleImageOverlap, 0, '移动端标题不应压图');
+    assert.ok(mobile.titleVisible, `移动端首屏标题底部 ${mobile.titleBottom}px 超出视口`);
 
     await capture('flippal-mobile-hero');
 
@@ -106,7 +108,10 @@ async function main() {
     await navigate();
     const desktop = await metrics();
     assert.ok(desktop.scrollWidth <= 1440);
-    assert.ok(desktop.heroOverlap >= 40, `首屏重叠 ${desktop.heroOverlap}px`);
+    assert.equal(desktop.titleImageOverlap, 0, `首屏标题压图 ${desktop.titleImageOverlap}px`);
+    assert.equal(desktop.titleKickerOverlap, 0, `标题压上头图说明 ${desktop.titleKickerOverlap}px`);
+    assert.equal(desktop.titleLeadOverlap, 0, `标题压住副标题 ${desktop.titleLeadOverlap}px`);
+    assert.ok(desktop.titleVisible, `1440x1100 首屏标题底部 ${desktop.titleBottom}px 超出视口`);
     assert.equal(desktop.loadedImages, desktop.imageCount);
 
     await capture('flippal-desktop-hero');
